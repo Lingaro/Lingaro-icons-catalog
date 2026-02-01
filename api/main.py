@@ -28,7 +28,8 @@ from .search import get_search_engine, IconsSearchEngine
 BASE_DIR = Path(__file__).parent.parent
 ICONS_DIR = BASE_DIR / "icons"
 ASSETS_DIR = BASE_DIR / "assets"
-STATIC_INDEX = BASE_DIR / "index.html"
+SITE_DIR = BASE_DIR / "_site"  # Built Jekyll site
+STATIC_INDEX = SITE_DIR / "index.html" if (BASE_DIR / "_site" / "index.html").exists() else BASE_DIR / "index.html"
 
 
 # Lifespan handler for startup/shutdown
@@ -62,12 +63,17 @@ app.add_middleware(
 )
 
 
-# Mount static files
-if ICONS_DIR.exists():
-    app.mount("/icons", StaticFiles(directory=ICONS_DIR), name="icons")
-
-if ASSETS_DIR.exists():
+# Mount static files - prefer _site if it exists (built Jekyll output)
+if SITE_DIR.exists() and (SITE_DIR / "assets").exists():
+    app.mount("/assets", StaticFiles(directory=SITE_DIR / "assets"), name="assets")
+elif ASSETS_DIR.exists():
     app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+
+# Mount icons - prefer _site/icons if exists
+if SITE_DIR.exists() and (SITE_DIR / "icons").exists():
+    app.mount("/icons", StaticFiles(directory=SITE_DIR / "icons"), name="icons")
+elif ICONS_DIR.exists():
+    app.mount("/icons", StaticFiles(directory=ICONS_DIR), name="icons")
 
 
 # ============================================================================
