@@ -17,7 +17,7 @@ git pull origin master
 # Create deployment package
 echo ">> Creating deployment package..."
 rm -f deploy.zip
-zip -r deploy.zip api assets icons _site requirements.txt run_api.py
+zip -r deploy.zip api assets icons index.html requirements.txt run_api.py
 
 # Deploy
 echo ">> Deploying to Azure..."

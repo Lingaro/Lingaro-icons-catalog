@@ -1,26 +1,94 @@
----
-layout: default
-title: Home
----
-
-<div class="container">
-  <section class="hero">
-    <h1 class="hero-title">Lingaro <span>Icons</span> Catalog</h1>
-    <p class="hero-subtitle">
-      Search through {{ site.data.icons.icons.size | default: '248' }}+ beautifully crafted SVG icons.
-      AI-powered semantic search helps you find the perfect icon.
-    </p>
-  </section>
-
-  {% include search-bar.html %}
-
-  <section class="icons-section">
-    <div class="icons-grid" id="icons-grid">
-      <!-- Icons loaded dynamically via JavaScript -->
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        <span>Loading icons...</span>
-      </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lingaro Icons Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="icons/lingaro_set4/Absract/Idea.svg">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <a href="/" class="logo">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="6" fill="#783cbe"/>
+          <path d="M7 12h10M12 7v10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-text">Lingaro Icons</span>
+      </a>
+      <nav class="nav">
+        <a href="/" class="nav-link active">Browse</a>
+        <a href="/api/docs" class="nav-link">API</a>
+      </nav>
     </div>
-  </section>
-</div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <section class="hero">
+        <h1 class="hero-title">Lingaro <span>Icons</span> Catalog</h1>
+        <p class="hero-subtitle">
+          Search through 248+ beautifully crafted SVG icons.
+          AI-powered semantic search helps you find the perfect icon.
+        </p>
+      </section>
+
+      <div class="search-container">
+        <div class="search-box">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" class="search-input" id="search-input" placeholder="Search icons by name, tag, or description...">
+          <button class="search-clear" id="clear-search" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="search-filters">
+          <div class="filter-group filter-group--collections">
+            <label class="filter-label">Collections:</label>
+            <div id="collections-filter" class="collections-checkboxes">
+              <span class="loading-text">Loading collections...</span>
+            </div>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Category:</label>
+            <select class="filter-select" id="category-filter">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+          <span class="search-stats" id="results-count">Loading...</span>
+        </div>
+      </div>
+
+      <section class="icons-section">
+        <div class="icons-grid" id="icons-grid">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <span>Loading icons...</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 Lingaro. 248 icons available.</p>
+      <p class="footer-tech">Built with AI-powered semantic search</p>
+    </div>
+  </footer>
+
+  <script>
+    window.ICONS_DATA_URL = 'assets/data/icons.json';
+    window.BASE_URL = '';
+  </script>
+  <script src="assets/js/search.js"></script>
+</body>
+</html>

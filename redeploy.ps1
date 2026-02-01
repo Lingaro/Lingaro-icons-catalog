@@ -16,7 +16,7 @@ git pull origin master
 # Create ZIP
 Write-Host ">> Creating deployment package..." -ForegroundColor Yellow
 if (Test-Path deploy.zip) { Remove-Item deploy.zip -Force }
-zip -r deploy.zip api assets icons _site requirements.txt run_api.py
+zip -r deploy.zip api assets icons index.html requirements.txt run_api.py
 
 # Deploy
 Write-Host ">> Deploying to Azure..." -ForegroundColor Yellow
