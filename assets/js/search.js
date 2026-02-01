@@ -772,6 +772,7 @@
         const action = button.dataset.action;
         const path = button.dataset.path;
         const name = button.dataset.name;
+        const iconId = button.dataset.iconId;
 
         switch (action) {
           case 'download-svg':
@@ -788,6 +789,15 @@
             break;
           case 'copy-png':
             copyPngToClipboard(path, button);
+            break;
+          case 'edit-icon':
+            toggleEditForm(modal, true);
+            break;
+          case 'cancel-edit':
+            toggleEditForm(modal, false);
+            break;
+          case 'save-edit':
+            saveIconEdit(modal, iconId);
             break;
         }
       }
@@ -810,6 +820,116 @@
       modal.classList.remove('show');
       document.body.classList.remove('modal-open');
       setTimeout(() => modal.remove(), 300);
+    }
+  }
+
+  // Toggle edit form visibility
+  function toggleEditForm(modal, show) {
+    const editForm = modal.querySelector('.edit-form');
+    const modalInfo = modal.querySelector('.modal-icon-info');
+    const description = modalInfo.querySelector('.modal-icon-description');
+    const tags = modalInfo.querySelector('.modal-icon-tags');
+    const useCases = modalInfo.querySelector('.modal-use-cases');
+    const actions = modalInfo.querySelector('.modal-actions');
+
+    if (show) {
+      // Hide view elements, show edit form
+      if (description) description.style.display = 'none';
+      if (tags) tags.style.display = 'none';
+      if (useCases) useCases.style.display = 'none';
+      if (actions) actions.style.display = 'none';
+      editForm.style.display = 'block';
+    } else {
+      // Show view elements, hide edit form
+      if (description) description.style.display = '';
+      if (tags) tags.style.display = '';
+      if (useCases) useCases.style.display = '';
+      if (actions) actions.style.display = '';
+      editForm.style.display = 'none';
+    }
+  }
+
+  // Save icon edit via API
+  async function saveIconEdit(modal, iconId) {
+    const editForm = modal.querySelector('.edit-form');
+    const descriptionInput = editForm.querySelector('#edit-description');
+    const tagsInput = editForm.querySelector('#edit-tags');
+    const useCasesInput = editForm.querySelector('#edit-use-cases');
+
+    const description = descriptionInput.value.trim();
+    const tags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
+    const useCases = useCasesInput.value.split('\n').map(uc => uc.trim()).filter(uc => uc);
+
+    const saveButton = editForm.querySelector('[data-action="save-edit"]');
+    const originalText = saveButton.innerHTML;
+    saveButton.innerHTML = 'Saving...';
+    saveButton.disabled = true;
+
+    try {
+      const response = await fetch(`/api/icons/${encodeURIComponent(iconId)}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description: description || null,
+          tags: tags.length > 0 ? tags : null,
+          use_cases: useCases.length > 0 ? useCases : null
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save changes');
+      }
+
+      const updatedIcon = await response.json();
+
+      // Update local data
+      const iconIndex = iconsData.icons.findIndex(i => i.id === iconId);
+      if (iconIndex !== -1) {
+        iconsData.icons[iconIndex].description = updatedIcon.description;
+        iconsData.icons[iconIndex].tags = updatedIcon.tags;
+        iconsData.icons[iconIndex].use_cases = updatedIcon.use_cases;
+      }
+
+      // Update the modal view
+      const modalInfo = modal.querySelector('.modal-icon-info');
+      const descEl = modalInfo.querySelector('.modal-icon-description');
+      if (descEl) descEl.textContent = description || 'No description available';
+
+      // Update tags
+      const tagsEl = modalInfo.querySelector('.modal-icon-tags');
+      if (tagsEl) {
+        if (tags.length > 0) {
+          tagsEl.innerHTML = tags.map(tag =>
+            `<span class="detail-tag" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</span>`
+          ).join('');
+          tagsEl.style.display = '';
+        } else {
+          tagsEl.innerHTML = '';
+        }
+      }
+
+      // Update use cases
+      const useCasesEl = modalInfo.querySelector('.modal-use-cases');
+      if (useCasesEl) {
+        if (useCases.length > 0) {
+          useCasesEl.innerHTML = `<h4>Use Cases</h4><ul>${useCases.map(uc => `<li>${escapeHtml(uc)}</li>`).join('')}</ul>`;
+          useCasesEl.style.display = '';
+        } else {
+          useCasesEl.innerHTML = '';
+        }
+      }
+
+      showToast('Changes saved successfully!', 'success');
+      toggleEditForm(modal, false);
+
+    } catch (error) {
+      console.error('Save error:', error);
+      showToast('Failed to save changes', 'error');
+    } finally {
+      saveButton.innerHTML = originalText;
+      saveButton.disabled = false;
     }
   }
 
@@ -879,6 +999,16 @@
         </button>`;
     }
 
+    // Edit button
+    const editButton = `
+      <button class="btn btn--edit" data-action="edit-icon" data-icon-id="${escapeHtml(icon.id)}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      </button>`;
+
     // Similar icons HTML
     let similarHTML = '';
     if (similarIcons.length > 0) {
@@ -930,7 +1060,31 @@
               </div>
             ` : ''}
 
-            <div class="modal-actions">${actionButtons}</div>
+            <div class="modal-actions">
+              ${actionButtons}
+              ${editButton}
+            </div>
+
+            <!-- Edit Form (hidden by default) -->
+            <div class="edit-form" style="display: none;" data-icon-id="${escapeHtml(icon.id)}">
+              <h4>Edit Icon Metadata</h4>
+              <div class="form-group">
+                <label for="edit-description">Description</label>
+                <textarea id="edit-description" rows="3" placeholder="Enter icon description...">${escapeHtml(icon.description || '')}</textarea>
+              </div>
+              <div class="form-group">
+                <label for="edit-tags">Tags (comma-separated)</label>
+                <input type="text" id="edit-tags" placeholder="tag1, tag2, tag3..." value="${escapeHtml((icon.tags || []).join(', '))}">
+              </div>
+              <div class="form-group">
+                <label for="edit-use-cases">Use Cases (one per line)</label>
+                <textarea id="edit-use-cases" rows="3" placeholder="Enter use cases...">${escapeHtml((icon.use_cases || []).join('\n'))}</textarea>
+              </div>
+              <div class="edit-form-actions">
+                <button class="btn btn--primary" data-action="save-edit" data-icon-id="${escapeHtml(icon.id)}">Save Changes</button>
+                <button class="btn" data-action="cancel-edit">Cancel</button>
+              </div>
+            </div>
           </div>
         </div>
 

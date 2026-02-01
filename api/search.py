@@ -360,6 +360,48 @@ class IconsSearchEngine:
 
         return results[offset:offset + limit]
 
+    def update_icon(
+        self,
+        icon_id: str,
+        description: Optional[str] = None,
+        tags: Optional[list[str]] = None,
+        use_cases: Optional[list[str]] = None
+    ) -> Optional[dict]:
+        """Update icon metadata and save to file."""
+        # Find the icon
+        icon_index = None
+        for i, icon in enumerate(self.icons):
+            if icon["id"] == icon_id:
+                icon_index = i
+                break
+
+        if icon_index is None:
+            return None
+
+        # Update fields if provided
+        if description is not None:
+            self.icons[icon_index]["description"] = description
+        if tags is not None:
+            self.icons[icon_index]["tags"] = tags
+        if use_cases is not None:
+            self.icons[icon_index]["use_cases"] = use_cases
+
+        # Save to file
+        self._save_data()
+
+        return self.icons[icon_index]
+
+    def _save_data(self):
+        """Save icons data back to JSON file."""
+        data = {
+            "icons": self.icons,
+            "categories": self.categories,
+            "sets": self.sets,
+            "meta": self.meta
+        }
+        with open(self.data_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
 
 # Singleton instance
 _search_engine: Optional[IconsSearchEngine] = None

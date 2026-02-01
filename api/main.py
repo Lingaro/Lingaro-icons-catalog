@@ -18,6 +18,7 @@ from .models import (
     CatalogStats,
     HealthResponse,
     IconResponse,
+    IconUpdate,
     SearchRequest,
     SearchResponse,
 )
@@ -230,6 +231,38 @@ async def get_icon(icon_id: str):
         raise HTTPException(status_code=404, detail=f"Icon not found: {icon_id}")
 
     return icon
+
+
+@app.patch("/api/icons/{icon_id}", response_model=IconResponse, tags=["Icons"])
+async def update_icon(icon_id: str, update: IconUpdate):
+    """
+    Update icon metadata (description, tags, use_cases).
+
+    Only provided fields will be updated.
+    """
+    engine = get_search_engine()
+
+    updated = engine.update_icon(
+        icon_id=icon_id,
+        description=update.description,
+        tags=update.tags,
+        use_cases=update.use_cases
+    )
+
+    if not updated:
+        raise HTTPException(status_code=404, detail=f"Icon not found: {icon_id}")
+
+    return IconResponse(
+        id=updated["id"],
+        name=updated["name"],
+        filename=updated["filename"],
+        path=updated["path"],
+        category=updated["category"],
+        set=updated["set"],
+        description=updated.get("description"),
+        tags=updated.get("tags", []),
+        use_cases=updated.get("use_cases", [])
+    )
 
 
 @app.get("/api/icons/{icon_id}/file", tags=["Icons"])

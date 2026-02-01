@@ -59,3 +59,10 @@ class HealthResponse(BaseModel):
     status: str = "ok"
     version: str = "1.0.0"
     embedding_enabled: bool = False
+
+
+class IconUpdate(BaseModel):
+    """Model for updating icon metadata."""
+    description: Optional[str] = Field(None, description="Icon description")
+    tags: Optional[list[str]] = Field(None, description="List of tags")
+    use_cases: Optional[list[str]] = Field(None, description="List of use cases")

@@ -1050,6 +1050,95 @@ body.modal-open {
   }
 }
 
+// Edit Form in Modal
+.edit-form {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid $border-color;
+
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: $text-color;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: $text-color;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid $border-color;
+      border-radius: $radius-sm;
+      font-size: 0.875rem;
+      font-family: inherit;
+      background: $card-bg;
+      color: $text-color;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      }
+
+      &::placeholder {
+        color: $text-light;
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+
+  .edit-form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+
+    .btn {
+      padding: 10px 20px;
+    }
+
+    .btn--primary {
+      background: $primary-color;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: darken($primary-color, 10%);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.btn--edit {
+  background: transparent;
+  border: 1px solid $border-color;
+  color: $text-light;
+
+  &:hover {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
 // Icon card tooltip styling
 .icon-card[title] {
   cursor: pointer;
