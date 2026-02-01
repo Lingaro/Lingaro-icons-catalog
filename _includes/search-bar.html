@@ -1,0 +1,44 @@
+<div class="search-container">
+  <div class="search-box">
+    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="M21 21l-4.35-4.35"/>
+    </svg>
+    <input
+      type="text"
+      id="search-input"
+      class="search-input"
+      placeholder="Search icons by name, description, or concept..."
+      autocomplete="off"
+      spellcheck="false"
+    >
+    <button id="clear-search" class="search-clear" type="button" aria-label="Clear search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="search-filters">
+    <!-- Collections (Icon Sets) as checkboxes -->
+    <div class="filter-group filter-group--collections">
+      <label class="filter-label">Collections:</label>
+      <div id="collections-filter" class="collections-checkboxes">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label for="category-filter" class="filter-label">Category:</label>
+      <select id="category-filter" class="filter-select">
+        <option value="">All Categories</option>
+        <!-- Populated by JavaScript -->
+      </select>
+    </div>
+
+    <div class="search-stats">
+      <span id="results-count">Loading...</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1 @@
+# Lingaro Icons Catalog API

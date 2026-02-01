@@ -1,0 +1,65 @@
+---
+layout: default
+title: Categories
+---
+
+<div class="container">
+  <section class="hero">
+    <h1 class="hero-title">Browse by <span>Category</span></h1>
+    <p class="hero-subtitle">
+      Explore icons organized into {{ site.data.icons.categories.size | default: '18' }} thematic categories
+    </p>
+  </section>
+
+  <section class="categories-section">
+    <div class="categories-grid" id="categories-grid">
+      {% if site.data.icons.categories %}
+        {% for category in site.data.icons.categories %}
+          {% assign cat_icons = site.data.icons.icons | where: "category", category %}
+          <a href="{{ '/' | relative_url }}?category={{ category | url_encode }}" class="category-card">
+            {% if cat_icons.first %}
+              <img src="{{ cat_icons.first.path | relative_url }}" alt="{{ category }}" class="category-card-icon">
+            {% endif %}
+            <h3 class="category-card-name">{{ category }}</h3>
+            <span class="category-card-count">{{ cat_icons.size }} icons</span>
+          </a>
+        {% endfor %}
+      {% else %}
+        <!-- Fallback when data not yet generated -->
+        <div class="loading">
+          <p>Categories will appear after running the icon scan script.</p>
+          <code>python scripts/scan_icons.py</code>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="icons-section" style="margin-top: 48px;">
+    <h2 style="margin-bottom: 24px;">All Icons</h2>
+    {% include search-bar.html %}
+    <div class="icons-grid" id="icons-grid">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <span>Loading icons...</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Check URL for category filter
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+    if (category) {
+      const categoryFilter = document.getElementById('category-filter');
+      if (categoryFilter) {
+        // Wait for options to be populated
+        setTimeout(() => {
+          categoryFilter.value = category;
+          categoryFilter.dispatchEvent(new Event('change'));
+        }, 500);
+      }
+    }
+  });
+</script>

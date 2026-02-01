@@ -1,0 +1,20 @@
+# Lingaro Icons Catalog - Azure App Service Dependencies
+
+# Web framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+
+# Data validation
+pydantic>=2.5.0
+
+# OpenAI for semantic search embeddings
+openai>=1.0.0
+
+# Numerical computation for vector search
+numpy>=1.24.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# Gunicorn for production WSGI server
+gunicorn>=21.0.0

@@ -1,0 +1,41 @@
+<article class="icon-card" data-id="{{ include.icon.id }}" data-category="{{ include.icon.category }}" data-tags="{{ include.icon.tags | join: ',' }}">
+  <div class="icon-preview">
+    <img src="{{ include.icon.path | relative_url }}" alt="{{ include.icon.name }}" loading="lazy" class="icon-image">
+  </div>
+
+  <div class="icon-info">
+    <h3 class="icon-name">{{ include.icon.name }}</h3>
+    <span class="icon-category">{{ include.icon.category }}</span>
+  </div>
+
+  <p class="icon-description">{{ include.icon.description }}</p>
+
+  <div class="icon-tags">
+    {% for tag in include.icon.tags limit:5 %}
+    <span class="tag" data-tag="{{ tag }}">{{ tag }}</span>
+    {% endfor %}
+  </div>
+
+  <div class="icon-actions">
+    <button class="btn btn--download" data-path="{{ include.icon.path }}" title="Download SVG">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+      </svg>
+      Download
+    </button>
+    <button class="btn btn--copy" data-path="{{ include.icon.path }}" title="Copy URL">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+      </svg>
+      Copy URL
+    </button>
+    <button class="btn btn--embed" data-path="{{ include.icon.path }}" data-name="{{ include.icon.name }}" title="Copy embed code">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="16,18 22,12 16,6"/>
+        <polyline points="8,6 2,12 8,18"/>
+      </svg>
+      Embed
+    </button>
+  </div>
+</article>

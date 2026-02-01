@@ -1,0 +1,58 @@
+# Lingaro Icons Catalog - Jekyll Configuration
+
+title: Lingaro Icons Catalog
+description: A searchable catalog of 248+ SVG icons with AI-powered annotations and semantic search
+url: "" # Set to your GitHub Pages URL, e.g., https://username.github.io
+baseurl: "/Lingaro-icons-catalog" # Repository name for GitHub Pages
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Sass settings
+sass:
+  style: compressed
+  sass_dir: _sass
+
+# Exclude from build
+exclude:
+  - scripts/
+  - requirements.txt
+  - Gemfile.lock
+  - README.md
+  - CLAUDE.md
+  - "*.py"
+  - node_modules/
+  - vendor/
+
+# Include data files
+include:
+  - _data
+
+# Collections (if needed for categories)
+collections:
+  categories:
+    output: true
+    permalink: /category/:name/
+
+# Default settings
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+# Plugin configuration
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Site metadata
+author: Lingaro
+twitter:
+  card: summary
+logo: /assets/images/logo.svg
+
+# Custom variables
+icon_color: "#783cbe"
+github_repo: "https://github.com/your-username/Lingaro-icons-catalog"
