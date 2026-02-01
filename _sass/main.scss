@@ -155,10 +155,21 @@ body {
     font-weight: 700;
     color: $text-color;
     margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
 
     span {
       color: $primary-color;
     }
+  }
+
+  &-logo {
+    height: 32px;
+    width: auto;
+    vertical-align: middle;
   }
 
   &-subtitle {
