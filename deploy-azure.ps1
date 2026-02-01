@@ -56,6 +56,9 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ZipFile = Join-Path $ScriptDir "lingaro-icons-deploy.zip"
 
+# Cross-platform temp directory
+$TempDir = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
+
 # Colors for output
 function Write-Step { param($msg) Write-Host "`n>> $msg" -ForegroundColor Cyan }
 function Write-Success { param($msg) Write-Host "   $msg" -ForegroundColor Green }
@@ -86,7 +89,7 @@ if (-not $SkipZip) {
     )
 
     # Create temp folder for staging
-    $stagingDir = Join-Path $env:TEMP "lingaro-icons-staging"
+    $stagingDir = Join-Path $TempDir "lingaro-icons-staging"
     if (Test-Path $stagingDir) {
         Remove-Item $stagingDir -Recurse -Force
     }

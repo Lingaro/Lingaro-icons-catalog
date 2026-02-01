@@ -14,6 +14,9 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ZipFile = Join-Path $ScriptDir "lingaro-icons-deploy.zip"
 
+# Cross-platform temp directory
+$TempDir = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
+
 Write-Host "`n=== Preparing Deployment Package ===" -ForegroundColor Cyan
 
 # Files to include
@@ -26,7 +29,7 @@ $includeItems = @(
 )
 
 # Create staging folder
-$staging = Join-Path $env:TEMP "lingaro-staging-$(Get-Random)"
+$staging = Join-Path $TempDir "lingaro-staging-$(Get-Random)"
 New-Item -ItemType Directory -Path $staging -Force | Out-Null
 
 # Copy files
