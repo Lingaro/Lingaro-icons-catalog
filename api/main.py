@@ -11,7 +11,7 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .models import (
@@ -22,6 +22,13 @@ from .models import (
     SearchResponse,
 )
 from .search import get_search_engine, IconsSearchEngine
+
+
+# Paths
+BASE_DIR = Path(__file__).parent.parent
+ICONS_DIR = BASE_DIR / "icons"
+ASSETS_DIR = BASE_DIR / "assets"
+STATIC_INDEX = BASE_DIR / "index.html"
 
 
 # Lifespan handler for startup/shutdown
@@ -41,6 +48,8 @@ app = FastAPI(
     description="Search and browse 248+ SVG icons with AI-powered semantic search",
     version="1.0.0",
     lifespan=lifespan,
+    docs_url="/api/docs",
+    openapi_url="/api/openapi.json",
 )
 
 # CORS middleware for frontend access
@@ -53,28 +62,51 @@ app.add_middleware(
 )
 
 
-# Mount static files for icons
-ICONS_DIR = Path(__file__).parent.parent / "icons"
+# Mount static files
 if ICONS_DIR.exists():
     app.mount("/icons", StaticFiles(directory=ICONS_DIR), name="icons")
+
+if ASSETS_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+
+
+# ============================================================================
+# Static Site - Serve index.html at root
+# ============================================================================
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+async def serve_index():
+    """Serve the static landing page."""
+    if STATIC_INDEX.exists():
+        return FileResponse(STATIC_INDEX)
+    # Fallback to API info if no index.html
+    return HTMLResponse(content="""
+        <html>
+        <head><title>Lingaro Icons Catalog</title></head>
+        <body>
+            <h1>Lingaro Icons Catalog API</h1>
+            <p>API docs: <a href="/api/docs">/api/docs</a></p>
+        </body>
+        </html>
+    """)
 
 
 # ============================================================================
 # Health & Info Endpoints
 # ============================================================================
 
-@app.get("/", tags=["Info"])
-async def root():
+@app.get("/api", tags=["Info"])
+async def api_root():
     """API root - returns basic info."""
     return {
         "name": "Lingaro Icons Catalog API",
         "version": "1.0.0",
-        "docs": "/docs",
-        "openapi": "/openapi.json"
+        "docs": "/api/docs",
+        "openapi": "/api/openapi.json"
     }
 
 
-@app.get("/health", response_model=HealthResponse, tags=["Info"])
+@app.get("/api/health", response_model=HealthResponse, tags=["Info"])
 async def health_check():
     """Health check endpoint."""
     engine = get_search_engine()
@@ -85,7 +117,7 @@ async def health_check():
     )
 
 
-@app.get("/stats", response_model=CatalogStats, tags=["Info"])
+@app.get("/api/stats", response_model=CatalogStats, tags=["Info"])
 async def get_stats():
     """Get catalog statistics."""
     engine = get_search_engine()
@@ -103,7 +135,7 @@ async def get_stats():
 # Search Endpoints
 # ============================================================================
 
-@app.get("/search", response_model=SearchResponse, tags=["Search"])
+@app.get("/api/search", response_model=SearchResponse, tags=["Search"])
 async def search_icons(
     q: str = Query(..., min_length=1, max_length=500, description="Search query"),
     category: Optional[str] = Query(None, description="Filter by category"),
@@ -142,7 +174,7 @@ async def search_icons(
     )
 
 
-@app.post("/search", response_model=SearchResponse, tags=["Search"])
+@app.post("/api/search", response_model=SearchResponse, tags=["Search"])
 async def search_icons_post(request: SearchRequest):
     """
     Search icons by query (POST version for complex queries).
@@ -164,7 +196,7 @@ async def search_icons_post(request: SearchRequest):
 # Icons Endpoints
 # ============================================================================
 
-@app.get("/icons", response_model=list[IconResponse], tags=["Icons"])
+@app.get("/api/icons", response_model=list[IconResponse], tags=["Icons"])
 async def list_icons(
     category: Optional[str] = Query(None, description="Filter by category"),
     set: Optional[str] = Query(None, description="Filter by icon set"),
@@ -183,7 +215,7 @@ async def list_icons(
     )
 
 
-@app.get("/icons/{icon_id}", response_model=IconResponse, tags=["Icons"])
+@app.get("/api/icons/{icon_id}", response_model=IconResponse, tags=["Icons"])
 async def get_icon(icon_id: str):
     """
     Get a specific icon by ID.
@@ -200,7 +232,7 @@ async def get_icon(icon_id: str):
     return icon
 
 
-@app.get("/icons/{icon_id}/file", tags=["Icons"])
+@app.get("/api/icons/{icon_id}/file", tags=["Icons"])
 async def get_icon_file(icon_id: str):
     """
     Get the SVG file for an icon.
@@ -213,7 +245,7 @@ async def get_icon_file(icon_id: str):
     if not icon:
         raise HTTPException(status_code=404, detail=f"Icon not found: {icon_id}")
 
-    file_path = Path(__file__).parent.parent / icon.path
+    file_path = BASE_DIR / icon.path
 
     if not file_path.exists():
         raise HTTPException(status_code=404, detail=f"Icon file not found")
@@ -229,14 +261,14 @@ async def get_icon_file(icon_id: str):
 # Categories Endpoints
 # ============================================================================
 
-@app.get("/categories", response_model=list[str], tags=["Categories"])
+@app.get("/api/categories", response_model=list[str], tags=["Categories"])
 async def list_categories():
     """Get list of all icon categories."""
     engine = get_search_engine()
     return engine.categories
 
 
-@app.get("/categories/{category}", response_model=list[IconResponse], tags=["Categories"])
+@app.get("/api/categories/{category}", response_model=list[IconResponse], tags=["Categories"])
 async def get_category_icons(
     category: str,
     limit: int = Query(100, ge=1, le=500)
@@ -254,7 +286,7 @@ async def get_category_icons(
 # Tags Endpoints
 # ============================================================================
 
-@app.get("/tags", tags=["Tags"])
+@app.get("/api/tags", tags=["Tags"])
 async def list_tags(limit: int = Query(100, ge=1, le=500)):
     """
     Get list of most common tags across all icons.
@@ -273,7 +305,7 @@ async def list_tags(limit: int = Query(100, ge=1, le=500)):
     return [{"tag": tag, "count": count} for tag, count in sorted_tags[:limit]]
 
 
-@app.get("/tags/{tag}", response_model=list[IconResponse], tags=["Tags"])
+@app.get("/api/tags/{tag}", response_model=list[IconResponse], tags=["Tags"])
 async def get_icons_by_tag(
     tag: str,
     limit: int = Query(50, ge=1, le=200)
