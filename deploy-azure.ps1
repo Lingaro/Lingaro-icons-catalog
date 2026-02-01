@@ -40,13 +40,14 @@
 #>
 
 param(
-    [string]$ResourceGroup = "lingaro-icons-rg",
+    [string]$ResourceGroup = "rg-Lingaro-Databricks-Demo-01",
     [string]$Location = "westeurope",
-    [string]$AppServicePlan = "lingaro-icons-plan",
+    [string]$AppServicePlan = "dc-web-apps",
     [string]$AppName = "lingaro-icons-catalog",
     [string]$PythonVersion = "3.11",
-    [string]$Sku = "B1",
-    [string]$OpenAIKey = "",
+    [string]$Sku = "F1",
+    [string]$OpenAIKey = "sk--ousUN3HvMYwfzmEivgkgQ",
+    [string]$OpenAIBaseURL = "https://llm.lingarogroup.com",
     [switch]$SkipZip,
     [switch]$ZipOnly
 )
