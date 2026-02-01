@@ -16,7 +16,18 @@ git pull origin master
 # Create ZIP
 Write-Host ">> Creating deployment package..." -ForegroundColor Yellow
 if (Test-Path deploy.zip) { Remove-Item deploy.zip -Force }
-zip -r deploy.zip api assets icons index.html requirements.txt run_api.py
+
+# Use PowerShell native compression for better Windows compatibility
+$filesToZip = @(
+    "api",
+    "assets",
+    "icons",
+    "index.html",
+    "requirements.txt",
+    "run_api.py"
+)
+Compress-Archive -Path $filesToZip -DestinationPath deploy.zip -Force
+Write-Host "   Included: $($filesToZip -join ', ')" -ForegroundColor Gray
 
 # Deploy
 Write-Host ">> Deploying to Azure..." -ForegroundColor Yellow
