@@ -176,29 +176,29 @@ try {
 }
 
 # Step 4: Create Resource Group
-Write-Step "Creating Resource Group: $ResourceGroup..."
-$rgExists = az group exists --name $ResourceGroup
-if ($rgExists -eq "true") {
-    Write-Info "Resource group already exists"
-} else {
-    az group create --name $ResourceGroup --location $Location --output none
-    Write-Success "Resource group created"
-}
+#Write-Step "Creating Resource Group: $ResourceGroup..."
+#$rgExists = az group exists --name $ResourceGroup
+#if ($rgExists -eq "true") {
+#    Write-Info "Resource group already exists"
+#} else {
+#    az group create --name $ResourceGroup --location $Location --output none
+#    Write-Success "Resource group created"
+#}
 
 # Step 5: Create App Service Plan
-Write-Step "Creating App Service Plan: $AppServicePlan..."
-$planExists = az appservice plan show --name $AppServicePlan --resource-group $ResourceGroup 2>$null
-if ($planExists) {
-    Write-Info "App Service Plan already exists"
-} else {
-    az appservice plan create `
-        --name $AppServicePlan `
-        --resource-group $ResourceGroup `
-        --is-linux `
-        --sku $Sku `
-        --output none
-    Write-Success "App Service Plan created (SKU: $Sku)"
-}
+#Write-Step "Creating App Service Plan: $AppServicePlan..."
+#$planExists = az appservice plan show --name $AppServicePlan --resource-group $ResourceGroup 2>$null
+#if ($planExists) {
+#    Write-Info "App Service Plan already exists"
+#} else {
+#    az appservice plan create `
+#        --name $AppServicePlan `
+#        --resource-group $ResourceGroup `
+#        --is-linux `
+#        --sku $Sku `
+#        --output none
+#    Write-Success "App Service Plan created (SKU: $Sku)"
+#}
 
 # Step 6: Create Web App
 Write-Step "Creating Web App: $AppName..."
