@@ -81,8 +81,15 @@ def build_site():
     # Compile SCSS
     compile_scss()
 
-    # Create simple index.html (without Jekyll templating)
-    create_index_html()
+    # Copy index.html from root (use the actual index.html, not generated)
+    index_src = ROOT_DIR / "index.html"
+    index_dst = BUILD_DIR / "index.html"
+    if index_src.exists():
+        shutil.copy2(index_src, index_dst)
+        print(f"[OK] Copied index.html")
+    else:
+        # Fallback to generated HTML if no index.html exists
+        create_index_html()
 
     print(f"\n[OK] Site built in {BUILD_DIR}")
 
@@ -194,7 +201,7 @@ def create_index_html():
                 var html = '';
                 data.sets.forEach(function(set) {
                   var count = data.icons.filter(function(i) { return i.set === set; }).length;
-                  var name = set.replace(/_/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+                  var name = set.replace(/_/g, ' ').replace(/\\b\\w/g, function(l) { return l.toUpperCase(); });
                   html += '<label class="collection-checkbox"><input type="checkbox" value="' + set + '" checked><span class="collection-name">' + name + '</span><span class="collection-count">(' + count + ')</span></label>';
                 });
                 el.innerHTML = html;
