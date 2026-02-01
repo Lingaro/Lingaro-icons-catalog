@@ -32,7 +32,7 @@ The Lingaro Icons Catalog is a web-based interface for browsing, searching, and 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/Lingaro-icons-catalog.git
+git clone https://github.com/Lingaro/Lingaro-icons-catalog.git
 cd Lingaro-icons-catalog
 ```
 
@@ -160,6 +160,62 @@ python generate_embeddings.py
 This generates vector embeddings for each icon's description to enable similarity-based search.
 
 ## Deployment
+
+### Deploy to Azure Web App
+
+#### Quick Deploy (Azure Cloud Shell)
+
+1. **Clone the repo in Azure Cloud Shell:**
+   ```bash
+   git clone https://github.com/Lingaro/Lingaro-icons-catalog.git
+   cd Lingaro-icons-catalog
+   ```
+
+2. **Set variables:**
+   ```bash
+   RG="rg-Lingaro-Databricks-Demo-01"
+   PLAN="dc-web-apps"
+   APP="lingaro-icons-catalog"
+   OPENAI_KEY="your-openai-key"
+   ```
+
+3. **Create and configure Web App:**
+   ```bash
+   # Create web app (skip if exists)
+   az webapp create --name $APP --resource-group $RG --plan $PLAN --runtime "PYTHON:3.11"
+
+   # Configure settings
+   az webapp config appsettings set --name $APP --resource-group $RG \
+     --settings OPENAI_API_KEY=$OPENAI_KEY SCM_DO_BUILD_DURING_DEPLOYMENT=true
+
+   az webapp config set --name $APP --resource-group $RG \
+     --startup-file "gunicorn -w 2 -k uvicorn.workers.UvicornWorker api.main:app --bind 0.0.0.0:8000"
+   ```
+
+4. **Deploy:**
+   ```bash
+   # Create deployment package
+   zip -r deploy.zip api assets icons requirements.txt run_api.py
+
+   # Deploy
+   az webapp deploy --name $APP --resource-group $RG --src-path deploy.zip --type zip
+   ```
+
+5. **Access your API:**
+   - API: `https://lingaro-icons-catalog.azurewebsites.net`
+   - Docs: `https://lingaro-icons-catalog.azurewebsites.net/docs`
+
+#### Using PowerShell Script (Local)
+
+```powershell
+# Create ZIP and show Cloud Shell commands
+.\prepare-deploy.ps1
+
+# Or full deployment (requires Azure CLI)
+.\deploy-azure.ps1 -OpenAIKey "your-key"
+```
+
+---
 
 ### Deploy to GitHub Pages
 
@@ -289,6 +345,43 @@ The catalog includes 18 categories:
 - **Safety** - Security icons
 - **Social Media** - Social platform icons
 - **Time** - Clocks and calendars
+
+## Git Operations
+
+### Refresh Cloned Repository
+
+To update your local clone with the latest changes from GitHub:
+
+```bash
+# Fetch and merge latest changes
+git pull origin master
+
+# Or fetch first, then merge manually
+git fetch origin
+git merge origin/master
+```
+
+### Force Refresh (Discard Local Changes)
+
+```bash
+# Reset to match remote (WARNING: discards local changes)
+git fetch origin
+git reset --hard origin/master
+```
+
+### Update Azure Deployment After Git Pull
+
+```bash
+# In Azure Cloud Shell after pulling updates
+cd Lingaro-icons-catalog
+git pull origin master
+
+# Redeploy
+zip -r deploy.zip api assets icons requirements.txt run_api.py
+az webapp deploy --name lingaro-icons-catalog --resource-group rg-Lingaro-Databricks-Demo-01 --src-path deploy.zip --type zip
+```
+
+---
 
 ## Troubleshooting
 
