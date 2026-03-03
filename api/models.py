@@ -66,3 +66,22 @@ class IconUpdate(BaseModel):
     description: Optional[str] = Field(None, description="Icon description")
     tags: Optional[list[str]] = Field(None, description="List of tags")
     use_cases: Optional[list[str]] = Field(None, description="List of use cases")
+
+
+class IconCreate(BaseModel):
+    """Model for creating an icon via upload."""
+    name: Optional[str] = None
+    category: str = Field(..., description="Icon category")
+    set: str = Field("lingaro_set4", description="Icon set name")
+
+
+class IconDetailResponse(IconBase):
+    """Full icon detail with status and timestamps."""
+    score: Optional[float] = None
+    status: str = "ready"
+    blob_url: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+    class Config:
+        populate_by_name = True

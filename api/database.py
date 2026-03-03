@@ -46,7 +46,7 @@ def init_db(db_path: Path = DEFAULT_DB_PATH) -> None:
 
 def get_db(db_path: Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
     """Get a database connection with row factory."""
-    conn = sqlite3.connect(str(db_path))
+    conn = sqlite3.connect(str(db_path), check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
