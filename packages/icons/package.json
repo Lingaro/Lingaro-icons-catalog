@@ -1,0 +1,39 @@
+{
+  "name": "@lingaro/icons",
+  "version": "1.0.0",
+  "description": "Lingaro icon library — SVG strings and React components",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    },
+    "./metadata": "./dist/metadata.json"
+  },
+  "scripts": {
+    "generate": "tsx scripts/build.ts",
+    "build": "tsx scripts/build.ts && tsup src/index.ts src/react.tsx --format cjs,esm --dts"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": true }
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.3.0",
+    "@types/react": "^18.0.0"
+  },
+  "files": ["dist"],
+  "license": "MIT"
+}
