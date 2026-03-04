@@ -36,6 +36,10 @@ Thumbs.db
 *.tmp
 *.bak
 
+# Database
+data/catalog.db
+data/*.db
+
 # Deployment artifacts
 lingaro-icons-deploy.zip
 *.zip
