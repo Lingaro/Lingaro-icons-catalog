@@ -82,7 +82,9 @@ if (-not $SkipZip) {
     $includeItems = @(
         "api",
         "assets",
+        "data",
         "icons",
+        "scripts",
         "requirements.txt",
         "run_api.py",
         "startup.txt"

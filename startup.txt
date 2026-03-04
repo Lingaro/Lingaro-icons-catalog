@@ -1,1 +1,1 @@
-gunicorn -w 2 -k uvicorn.workers.UvicornWorker api.main:app --bind 0.0.0.0:8000
+python -c "from scripts.migrate_to_sqlite import main; main()" && gunicorn -w 2 -k uvicorn.workers.UvicornWorker api.main:app --bind 0.0.0.0:8000
