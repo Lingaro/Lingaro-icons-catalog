@@ -44,16 +44,44 @@
     }
   }
 
-  // Load icons data from JSON
+  // Load icons data from API (with fallback to static JSON)
   async function loadIconsData() {
     try {
       showLoading();
-      const response = await fetch(window.ICONS_DATA_URL || '/assets/data/icons.json');
+      const apiBase = window.API_URL || '';
 
+      // Try loading from API first
+      try {
+        const [iconsRes, catsRes] = await Promise.all([
+          fetch(`${apiBase}/api/icons?limit=500`),
+          fetch(`${apiBase}/api/categories`),
+        ]);
+
+        if (iconsRes.ok && catsRes.ok) {
+          const icons = await iconsRes.json();
+          const categories = await catsRes.json();
+          const sets = [...new Set(icons.map(i => i.set || i.set_name).filter(Boolean))];
+          iconsData = {
+            icons: icons.map(i => ({
+              ...i,
+              set: i.set || i.set_name,
+              format: (i.filename || '').endsWith('.png') ? 'png' : 'svg',
+            })),
+            categories: categories.map(c => c.name || c),
+            sets,
+          };
+          filteredIcons = iconsData.icons;
+          return;
+        }
+      } catch (apiErr) {
+        console.warn('API not available, falling back to static JSON:', apiErr);
+      }
+
+      // Fallback to static JSON
+      const response = await fetch(window.ICONS_DATA_URL || '/assets/data/icons.json');
       if (!response.ok) {
         throw new Error('Failed to load icons data');
       }
-
       iconsData = await response.json();
       filteredIcons = iconsData.icons;
 
@@ -365,6 +393,13 @@
               <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
             </svg>
             Copy
+          </button>
+          <button class="btn btn--link" data-action="copy-url" data-path="${escapeHtml(icon.path)}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+            </svg>
+            Link
           </button>`;
     } else {
       // PNG icons: PNG download only, Copy PNG
@@ -381,6 +416,13 @@
               <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
             </svg>
             Copy
+          </button>
+          <button class="btn btn--link" data-action="copy-url" data-path="${escapeHtml(icon.path)}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+            </svg>
+            Link
           </button>`;
     }
 
@@ -531,7 +573,51 @@
     }
   }
 
-  // Copy SVG content to clipboard
+  // Convert SVG to PNG blob via canvas
+  function svgToPngBlob(svgText, scale = 4) {
+    return new Promise((resolve, reject) => {
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+      const svgEl = svgDoc.documentElement;
+
+      // Get dimensions from viewBox or width/height
+      let width = parseFloat(svgEl.getAttribute('width')) || 128;
+      let height = parseFloat(svgEl.getAttribute('height')) || 128;
+      const viewBox = svgEl.getAttribute('viewBox');
+      if (viewBox) {
+        const parts = viewBox.split(/[\s,]+/).map(Number);
+        if (parts.length === 4) {
+          width = parts[2];
+          height = parts[3];
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      const ctx = canvas.getContext('2d');
+
+      const img = new Image();
+      const svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(blob => {
+          if (blob) resolve(blob);
+          else reject(new Error('Canvas toBlob failed'));
+        }, 'image/png');
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load SVG as image'));
+      };
+      img.src = url;
+    });
+  }
+
+  // Copy SVG as PNG image to clipboard (pasteable in PowerPoint)
   async function copySvgToClipboard(path, element) {
     const fullUrl = `${window.location.origin}${window.BASE_URL || ''}/${path}`;
 
@@ -539,23 +625,21 @@
       const response = await fetch(fullUrl);
       const svgText = await response.text();
 
-      // Try to copy as both text and image
+      // Convert SVG to PNG and copy as image (works in PowerPoint)
       try {
-        // Modern clipboard API with SVG as image
-        const svgBlob = new Blob([svgText], { type: 'image/svg+xml' });
+        const pngBlob = await svgToPngBlob(svgText);
         await navigator.clipboard.write([
           new ClipboardItem({
-            'text/plain': new Blob([svgText], { type: 'text/plain' }),
+            'image/png': pngBlob
           })
         ]);
-      } catch {
-        // Fallback to text-only copy
-        await navigator.clipboard.writeText(svgText);
+      } catch (clipErr) {
+        console.warn('Image clipboard failed, falling back to text:', clipErr);
+        await fallbackCopyText(svgText);
       }
 
-      // Visual feedback
       showCopyFeedback(element, 'SVG copied!');
-      showToast('SVG copied to clipboard!', 'success');
+      showToast('SVG copied as image!', 'success');
 
     } catch (error) {
       console.error('Copy error:', error);
@@ -592,16 +676,31 @@
 
     try {
       const response = await fetch(fullUrl);
-      const blob = await response.blob();
+      const originalBlob = await response.blob();
 
-      // Copy image to clipboard
+      // ClipboardItem only supports image/png, convert if needed
+      let pngBlob = originalBlob;
+      if (originalBlob.type !== 'image/png') {
+        const img = new Image();
+        const url = URL.createObjectURL(originalBlob);
+        pngBlob = await new Promise((resolve, reject) => {
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            URL.revokeObjectURL(url);
+            canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/png');
+          };
+          img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
+          img.src = url;
+        });
+      }
+
       await navigator.clipboard.write([
-        new ClipboardItem({
-          [blob.type]: blob
-        })
+        new ClipboardItem({ 'image/png': pngBlob })
       ]);
 
-      // Visual feedback
       showCopyFeedback(element, 'PNG copied!');
       showToast('PNG copied to clipboard!', 'success');
 
@@ -628,14 +727,42 @@
     copyToClipboard(embedCode, button, 'Embed code copied!');
   }
 
-  // Copy to clipboard helper
+  // Fallback copy for non-secure contexts (http://)
+  function fallbackCopyText(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+    } catch (e) {
+      // ignore
+    }
+    document.body.removeChild(textarea);
+  }
+
+  // Copy to clipboard helper with fallback
   async function copyToClipboard(text, button, message) {
     try {
-      await navigator.clipboard.writeText(text);
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        fallbackCopyText(text);
+      }
       showCopyFeedback(button, message);
       showToast(message, 'success');
     } catch (err) {
-      showToast('Failed to copy', 'error');
+      // Try fallback on any error
+      try {
+        fallbackCopyText(text);
+        showCopyFeedback(button, message);
+        showToast(message, 'success');
+      } catch {
+        showToast('Failed to copy', 'error');
+      }
     }
   }
 
@@ -790,6 +917,12 @@
           case 'copy-png':
             copyPngToClipboard(path, button);
             break;
+          case 'copy-url':
+            copyIconUrl(path, button);
+            break;
+          case 'copy-embed':
+            copyEmbedCode(path, name, button);
+            break;
           case 'edit-icon':
             toggleEditForm(modal, true);
             break;
@@ -866,7 +999,7 @@
     saveButton.disabled = true;
 
     try {
-      const response = await fetch(`/api/icons/${encodeURIComponent(iconId)}`, {
+      const response = await fetch(`${window.API_URL || ''}/api/icons/${encodeURIComponent(iconId)}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -985,6 +1118,12 @@
         </button>
         <button class="btn" data-action="copy-svg" data-path="${escapeHtml(icon.path)}">
           Copy SVG
+        </button>
+        <button class="btn" data-action="copy-url" data-path="${escapeHtml(icon.path)}">
+          Copy Link
+        </button>
+        <button class="btn" data-action="copy-embed" data-path="${escapeHtml(icon.path)}" data-name="${escapeHtml(icon.name)}">
+          Copy Embed
         </button>`;
     } else {
       actionButtons = `
@@ -996,6 +1135,12 @@
         </button>
         <button class="btn" data-action="copy-png" data-path="${escapeHtml(icon.path)}">
           Copy PNG
+        </button>
+        <button class="btn" data-action="copy-url" data-path="${escapeHtml(icon.path)}">
+          Copy Link
+        </button>
+        <button class="btn" data-action="copy-embed" data-path="${escapeHtml(icon.path)}" data-name="${escapeHtml(icon.name)}">
+          Copy Embed
         </button>`;
     }
 
@@ -1092,5 +1237,324 @@
       </div>
     `;
   }
+
+  // ==================== Upload Icon Modal ====================
+
+  function initUpload() {
+    const uploadBtn = document.getElementById('upload-btn');
+    if (uploadBtn) {
+      uploadBtn.addEventListener('click', openUploadModal);
+    }
+  }
+
+  function openUploadModal() {
+    const modal = document.createElement('div');
+    modal.className = 'icon-modal upload-modal';
+    modal.innerHTML = `
+      <div class="modal-backdrop"></div>
+      <div class="modal-content" style="max-width:500px;">
+        <button class="modal-close" aria-label="Close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+        <div style="padding:32px;">
+          <h2 style="margin:0 0 20px;font-size:1.25rem;font-weight:700;">Add Icon</h2>
+
+          <div class="add-icon-tabs">
+            <button class="add-icon-tab active" data-tab="upload">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+              </svg>
+              Upload File
+            </button>
+            <button class="add-icon-tab" data-tab="link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+              </svg>
+              From URL
+            </button>
+          </div>
+
+          <form id="upload-form" class="edit-form" style="display:block;border:none;margin:0;padding:0;">
+            <!-- Upload tab -->
+            <div id="tab-upload" class="add-icon-tab-content">
+              <div class="form-group">
+                <label for="upload-file">Icon file (SVG or PNG)</label>
+                <input type="file" id="upload-file" accept=".svg,.png"
+                  style="padding:10px 12px;border:1px solid #e5e5f0;border-radius:6px;width:100%;font-size:0.875rem;background:#fff;">
+              </div>
+            </div>
+
+            <!-- Link tab -->
+            <div id="tab-link" class="add-icon-tab-content" style="display:none;">
+              <div class="form-group">
+                <label for="upload-url">Icon URL (SVG or PNG)</label>
+                <input type="url" id="upload-url" placeholder="https://example.com/icon.svg">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="upload-name">Name (optional, defaults to filename)</label>
+              <input type="text" id="upload-name" placeholder="e.g. Cloud Database">
+            </div>
+            <div class="form-group">
+              <label for="upload-category">Category</label>
+              <input type="text" id="upload-category" placeholder="e.g. Data Analysis Charts" required>
+            </div>
+            <div class="form-group">
+              <label for="upload-set">Collection</label>
+              <input type="text" id="upload-set" value="lingaro_set4" placeholder="e.g. lingaro_set4">
+            </div>
+            <div class="form-group">
+              <label for="upload-api-key">API Key <span style="color:#64648c;font-weight:400;">(optional in dev mode)</span></label>
+              <input type="text" id="upload-api-key" placeholder="Leave empty if API_KEY is not set on server">
+            </div>
+            <div id="upload-preview" style="display:none;text-align:center;margin-bottom:16px;">
+              <img id="upload-preview-img" style="max-width:80px;max-height:80px;background:#f8f8fc;border-radius:6px;padding:8px;" alt="Preview">
+            </div>
+            <div id="upload-status" style="display:none;margin-bottom:16px;padding:10px 14px;border-radius:6px;font-size:0.875rem;"></div>
+            <div class="edit-form-actions">
+              <button type="submit" class="btn btn--primary" id="upload-submit">Add &amp; Annotate</button>
+              <button type="button" class="btn" data-action="cancel-upload">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+    document.body.classList.add('modal-open');
+    requestAnimationFrame(() => modal.classList.add('show'));
+
+    // Tab switching
+    let activeTab = 'upload';
+    modal.querySelectorAll('.add-icon-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        activeTab = tab.dataset.tab;
+        modal.querySelectorAll('.add-icon-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        modal.querySelector('#tab-upload').style.display = activeTab === 'upload' ? '' : 'none';
+        modal.querySelector('#tab-link').style.display = activeTab === 'link' ? '' : 'none';
+        // Update preview
+        const preview = modal.querySelector('#upload-preview');
+        preview.style.display = 'none';
+        if (activeTab === 'link') {
+          const url = modal.querySelector('#upload-url').value.trim();
+          if (url) showLinkPreview(modal, url);
+        }
+      });
+    });
+
+    // File preview
+    modal.querySelector('#upload-file').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      const preview = modal.querySelector('#upload-preview');
+      const img = modal.querySelector('#upload-preview-img');
+      if (file) {
+        img.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+      } else {
+        preview.style.display = 'none';
+      }
+    });
+
+    // URL preview on blur
+    modal.querySelector('#upload-url').addEventListener('blur', (e) => {
+      const url = e.target.value.trim();
+      if (url) showLinkPreview(modal, url);
+    });
+
+    // Close handlers
+    modal.querySelector('.modal-close').addEventListener('click', () => closeUploadModal(modal));
+    modal.querySelector('.modal-backdrop').addEventListener('click', () => closeUploadModal(modal));
+    modal.querySelector('[data-action="cancel-upload"]').addEventListener('click', () => closeUploadModal(modal));
+
+    // Submit — detect active tab
+    modal.querySelector('#upload-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (activeTab === 'upload') {
+        handleUploadSubmit(modal);
+      } else {
+        handleLinkSubmit(modal);
+      }
+    });
+
+    // ESC key
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') {
+        closeUploadModal(modal);
+        document.removeEventListener('keydown', handleEsc);
+      }
+    };
+    document.addEventListener('keydown', handleEsc);
+  }
+
+  function showLinkPreview(modal, url) {
+    const preview = modal.querySelector('#upload-preview');
+    const img = modal.querySelector('#upload-preview-img');
+    if (/\.(svg|png)(\?.*)?$/i.test(url)) {
+      img.src = url;
+      preview.style.display = 'block';
+    }
+  }
+
+  function closeUploadModal(modal) {
+    modal.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(() => modal.remove(), 300);
+  }
+
+  async function handleUploadSubmit(modal) {
+    const fileInput = modal.querySelector('#upload-file');
+    const nameInput = modal.querySelector('#upload-name');
+    const categoryInput = modal.querySelector('#upload-category');
+    const setInput = modal.querySelector('#upload-set');
+    const apiKeyInput = modal.querySelector('#upload-api-key');
+    const submitBtn = modal.querySelector('#upload-submit');
+    const statusEl = modal.querySelector('#upload-status');
+
+    const file = fileInput.files[0];
+    if (!file) {
+      showUploadStatus(statusEl, 'Please select a file', 'error');
+      return;
+    }
+
+    const apiKey = apiKeyInput.value.trim();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Uploading...';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('category', categoryInput.value.trim());
+    formData.append('set_name', setInput.value.trim() || 'lingaro_set4');
+    if (nameInput.value.trim()) {
+      formData.append('name', nameInput.value.trim());
+    }
+
+    const headers = {};
+    if (apiKey) headers['X-API-Key'] = apiKey;
+
+    try {
+      const response = await fetch(`${window.API_URL || ''}/api/icons`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Upload failed');
+      }
+
+      showUploadStatus(statusEl, `Icon added! ID: ${data.id}. Annotation is running in the background.`, 'success');
+      submitBtn.textContent = 'Done';
+      showToast('Icon added successfully!', 'success');
+
+      // Reload icons to show the new one
+      await loadIconsData();
+      applyFilters();
+
+    } catch (error) {
+      showUploadStatus(statusEl, error.message, 'error');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Add & Annotate';
+    }
+  }
+
+  async function handleLinkSubmit(modal) {
+    const urlInput = modal.querySelector('#upload-url');
+    const nameInput = modal.querySelector('#upload-name');
+    const categoryInput = modal.querySelector('#upload-category');
+    const setInput = modal.querySelector('#upload-set');
+    const apiKeyInput = modal.querySelector('#upload-api-key');
+    const submitBtn = modal.querySelector('#upload-submit');
+    const statusEl = modal.querySelector('#upload-status');
+
+    const url = urlInput.value.trim();
+    if (!url) {
+      showUploadStatus(statusEl, 'Please enter a URL', 'error');
+      return;
+    }
+
+    const apiKey = apiKeyInput.value.trim();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Fetching & uploading...';
+
+    try {
+      // Fetch the file from the URL
+      const fileResponse = await fetch(url);
+      if (!fileResponse.ok) {
+        throw new Error('Failed to fetch icon from URL');
+      }
+
+      const blob = await fileResponse.blob();
+      const contentType = fileResponse.headers.get('content-type') || '';
+
+      // Determine filename and extension
+      let filename = url.split('/').pop().split('?')[0] || 'icon';
+      if (!filename.match(/\.(svg|png)$/i)) {
+        if (contentType.includes('svg')) {
+          filename += '.svg';
+        } else if (contentType.includes('png')) {
+          filename += '.png';
+        } else {
+          throw new Error('URL must point to an SVG or PNG file');
+        }
+      }
+
+      const file = new File([blob], filename, { type: blob.type || contentType });
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('category', categoryInput.value.trim());
+      formData.append('set_name', setInput.value.trim() || 'lingaro_set4');
+      if (nameInput.value.trim()) {
+        formData.append('name', nameInput.value.trim());
+      }
+
+      const headers = {};
+      if (apiKey) headers['X-API-Key'] = apiKey;
+
+      const response = await fetch(`${window.API_URL || ''}/api/icons`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Upload failed');
+      }
+
+      showUploadStatus(statusEl, `Icon added! ID: ${data.id}. Annotation is running in the background.`, 'success');
+      submitBtn.textContent = 'Done';
+      showToast('Icon added successfully!', 'success');
+
+      // Reload icons to show the new one
+      await loadIconsData();
+      applyFilters();
+
+    } catch (error) {
+      showUploadStatus(statusEl, error.message, 'error');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Add & Annotate';
+    }
+  }
+
+  function showUploadStatus(el, message, type) {
+    el.style.display = 'block';
+    el.textContent = message;
+    el.style.background = type === 'error' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)';
+    el.style.color = type === 'error' ? '#dc2626' : '#059669';
+  }
+
+  // Initialize upload button after DOM ready
+  document.addEventListener('DOMContentLoaded', initUpload);
 
 })();

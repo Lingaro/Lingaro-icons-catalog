@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "Azure MCP Server"
+  ],
+  "enableAllProjectMcpServers": true
+}

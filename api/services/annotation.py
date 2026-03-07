@@ -2,11 +2,14 @@
 
 import base64
 import json
+import os
 from io import BytesIO
 from pathlib import Path
 from typing import Optional
 
 from openai import OpenAI
+
+DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
 try:
     import cairosvg
@@ -83,7 +86,7 @@ Respond with valid JSON only, no markdown formatting."""
 def _annotate_text(client: OpenAI, name: str, category: str) -> dict:
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model=DEFAULT_MODEL,
             messages=[{"role": "user", "content": ANNOTATION_PROMPT.format(name=name, category=category)}],
             max_tokens=500, temperature=0.3,
         )
@@ -101,7 +104,7 @@ def _annotate_vision(client: OpenAI, name: str, category: str, image_b64: str) -
     )
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model=DEFAULT_MODEL,
             messages=[{"role": "user", "content": [
                 {"type": "text", "text": prompt},
                 {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_b64}", "detail": "low"}},

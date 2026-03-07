@@ -4,6 +4,9 @@ import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).parent.parent / ".env")
+
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
@@ -23,6 +26,19 @@ STATIC_INDEX = BASE_DIR / "index.html"
 async def lifespan(app: FastAPI):
     db_path = Path(os.getenv("DATABASE_URL", str(DEFAULT_DB_PATH)))
     init_db(db_path)
+
+    # Auto-seed from icons.json if DB is empty
+    from .database import get_db
+    conn = get_db(db_path)
+    count = conn.execute("SELECT COUNT(*) FROM icons").fetchone()[0]
+    conn.close()
+    if count == 0:
+        json_path = BASE_DIR / "assets" / "data" / "icons.json"
+        if json_path.exists():
+            from scripts.migrate_to_sqlite import migrate_icons_json
+            imported = migrate_icons_json(json_path, db_path)
+            print(f"Auto-seeded {imported} icons from icons.json")
+
     yield
 
 

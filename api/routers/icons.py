@@ -22,30 +22,45 @@ MAX_FILE_SIZE = 5 * 1024 * 1024
 
 def _background_annotate(icon_id: str, db_path: str, file_data: bytes, icon_name: str, category: str):
     """Background task: annotate icon and generate embedding."""
+    import logging
+    logger = logging.getLogger(__name__)
+
     from openai import OpenAI
 
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
+        logger.warning("OPENAI_API_KEY not set, skipping annotation for %s", icon_id)
         conn = get_db(Path(db_path))
         update_icon(conn, icon_id, status="ready")
         conn.close()
         return
 
-    client = OpenAI(api_key=api_key)
+    try:
+        client_kwargs = {"api_key": api_key}
+        base_url = os.getenv("OPENAI_BASE_URL")
+        if base_url:
+            client_kwargs["base_url"] = base_url
+        client = OpenAI(**client_kwargs)
 
-    # Annotate
-    svg_data = file_data if icon_name.endswith(".svg") else None
-    metadata = run_annotation(client, icon_name, category, svg_data=svg_data)
+        # Annotate
+        svg_data = file_data if icon_name.endswith(".svg") else None
+        metadata = run_annotation(client, icon_name, category, svg_data=svg_data)
 
-    # Update metadata
-    conn = get_db(Path(db_path))
-    update_icon(conn, icon_id,
-        description=metadata.get("description"),
-        tags=metadata.get("tags", []),
-        use_cases=metadata.get("use_cases", []),
-        status="ready",
-    )
-    conn.close()
+        # Update metadata
+        conn = get_db(Path(db_path))
+        update_icon(conn, icon_id,
+            description=metadata.get("description"),
+            tags=metadata.get("tags", []),
+            use_cases=metadata.get("use_cases", []),
+            status="ready",
+        )
+        conn.close()
+        logger.info("Annotation complete for %s", icon_id)
+    except Exception as e:
+        logger.error("Annotation failed for %s: %s", icon_id, e)
+        conn = get_db(Path(db_path))
+        update_icon(conn, icon_id, status="ready")
+        conn.close()
 
 
 def _make_icon_id(set_name: str, category: str, name: str) -> str:
@@ -97,10 +112,11 @@ async def upload_icon(
         raise HTTPException(409, f"Icon '{icon_id}' already exists")
     storage_key = f"{set_name}/{category}/{file.filename}"
     storage.save(storage_key, data)
+    icon_path = f"icons/{storage_key}"
     db_path = os.getenv("DATABASE_URL", str(Path(__file__).parent.parent.parent / "data" / "catalog.db"))
     insert_icon(db, {
         "id": icon_id, "name": icon_name, "filename": file.filename,
-        "path": storage_key, "category": category, "set_name": set_name,
+        "path": icon_path, "category": category, "set_name": set_name,
         "status": "processing",
     })
     background_tasks.add_task(_background_annotate, icon_id, db_path, data, icon_name, category)
@@ -134,7 +150,8 @@ async def delete_icon_endpoint(
     icon = get_icon(db, icon_id)
     if not icon:
         raise HTTPException(404, "Icon not found")
-    storage.delete(icon["path"])
+    storage_key = icon["path"].removeprefix("icons/")
+    storage.delete(storage_key)
     delete_icon(db, icon_id)
 
 
@@ -145,7 +162,8 @@ async def get_icon_file(
     icon = get_icon(db, icon_id)
     if not icon:
         raise HTTPException(404, "Icon not found")
-    data = storage.get(icon["path"])
+    storage_key = icon["path"].removeprefix("icons/")
+    data = storage.get(storage_key)
     if not data:
         raise HTTPException(404, "Icon file not found")
     content_type = "image/svg+xml" if icon["filename"].endswith(".svg") else "image/png"
