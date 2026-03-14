@@ -24,9 +24,13 @@ PowerPoint (Desktop / Web / Mac)
         ├── Data: @lingaro/icons-client → catalog API (HTTPS)
         └── Insert: Office.js setSelectedDataAsync(base64 image)
 
-Catalog API (existing, no changes needed)
+Catalog API (existing)
   └── lingaro-icons-catalog.azurewebsites.net
       /api/search, /api/icons, /api/collections, /api/icons/{id}/file
+
+Prerequisites:
+  - Add getCollections() method to @lingaro/icons-client
+  - Add StaticFiles mount for /addin in api/main.py
 ```
 
 The task pane is a React web app hosted on the same Azure App Service (under `/addin` path). The XML manifest tells PowerPoint where to load it from.
@@ -55,10 +59,14 @@ No authentication required — internal tool, API has open CORS.
 
 ### Icon Insert Logic
 
-- If the icon is SVG → fetch from `/api/icons/{id}/file`, convert to base64, insert via `Office.context.document.setSelectedDataAsync()` with `coercionType: Office.CoercionType.Image`
-- If the icon is PNG → same flow, already raster
-- Default size: 1 inch (72 points)
+All icons are inserted as PNG via `Office.context.document.setSelectedDataAsync()` with `coercionType: Office.CoercionType.Image`. This is the most compatible approach across PowerPoint Desktop, Web, and Mac.
+
+- **SVG icons** → fetch from `/api/icons/{id}/file`, render to an off-screen `<canvas>` at 4x resolution (same technique the web catalog uses for clipboard copy), export as PNG base64, insert
+- **PNG icons** → fetch as blob, convert to base64, insert directly
+- Default size: 1 inch width (72 points). Height auto-scales to preserve aspect ratio.
 - No color customization in v1
+
+Note: `Office.CoercionType.XmlSvg` exists for native SVG insertion but has limited platform support. We use canvas-based PNG conversion for universal compatibility.
 
 ## Project Structure
 
@@ -107,7 +115,7 @@ powerpoint-addin/
 | `Toast` | Brief notification after insert (success: green, error: red), auto-dismiss after 3s |
 | `useSearch` | Wraps `IconsClient.search()` with debounce and loading state |
 | `useCollections` | Fetches and caches collection/category data on mount |
-| `useInsertIcon` | Fetches icon file as blob → converts to base64 → calls Office.js insert API |
+| `useInsertIcon` | Fetches icon file as blob → SVGs rendered to canvas as PNG at 4x → converts to base64 → calls Office.js `setSelectedDataAsync` with `CoercionType.Image` |
 
 ## Manifest & Distribution
 
@@ -132,7 +140,20 @@ IT admin uploads the same manifest to Microsoft 365 Admin Center → Integrated 
 
 ## Hosting
 
-Hosted on the existing Azure App Service at `lingaro-icons-catalog.azurewebsites.net` under the `/addin` path. The FastAPI app serves the built React app as static files. No additional infrastructure needed.
+Hosted on the existing Azure App Service at `lingaro-icons-catalog.azurewebsites.net` under the `/addin` path. A new `StaticFiles` mount is added to `api/main.py`:
+
+```python
+app.mount("/addin", StaticFiles(directory="powerpoint-addin/dist", html=True), name="addin")
+```
+
+The build pipeline runs `pnpm build` in `powerpoint-addin/` and the output goes to `powerpoint-addin/dist/`. No additional infrastructure needed.
+
+## Prerequisites
+
+Before building the add-in itself, two small changes to existing code:
+
+1. **Add `getCollections()` to `@lingaro/icons-client`** — the `/api/collections` endpoint exists but the TypeScript client has no method for it. Add `getCollections(): Promise<Collection[]>` to the client class and export the `Collection` type.
+2. **Add `/addin` static mount to `api/main.py`** — serve the built React app from `powerpoint-addin/dist/`.
 
 ## Tech Stack
 
