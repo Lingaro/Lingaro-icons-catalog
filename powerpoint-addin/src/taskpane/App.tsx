@@ -42,6 +42,7 @@ export function App() {
 
   const handleSearch = (value: string) => {
     setQuery(value);
+    setSelectedCategory(null);
     setSelectedIcon(null);
   };
 
