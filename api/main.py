@@ -66,6 +66,8 @@ if (BASE_DIR / "assets").exists():
     app.mount("/assets", StaticFiles(directory=str(BASE_DIR / "assets")), name="assets")
 if (BASE_DIR / "icons").exists():
     app.mount("/icons", StaticFiles(directory=str(BASE_DIR / "icons")), name="icons")
+if (BASE_DIR / "powerpoint-addin" / "dist").exists():
+    app.mount("/addin", StaticFiles(directory=str(BASE_DIR / "powerpoint-addin" / "dist"), html=True), name="addin")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -89,9 +91,11 @@ async def health_check():
 async def get_stats(db=Depends(get_database)):
     svc = SearchService(db)
     cats = svc.get_categories()
+    sets_cursor = db.execute("SELECT DISTINCT set_name FROM icons WHERE status = 'ready'")
+    sets_list = [row[0] for row in sets_cursor.fetchall()]
     return CatalogStats(
         total_icons=svc.count_icons(),
         categories=[c["name"] for c in cats],
-        sets=["lingaro_set4"],
+        sets=sets_list,
         icons_with_embeddings=0,
     )
