@@ -29,3 +29,10 @@ export interface ClientConfig {
   baseUrl: string;
   apiKey?: string;
 }
+
+export interface Collection {
+  name: string;
+  icon_count: number;
+  categories: string[];
+  cover_icon_id: string | null;
+}

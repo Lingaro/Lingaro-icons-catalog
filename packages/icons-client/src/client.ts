@@ -1,4 +1,4 @@
-import type { Icon, SearchResponse, SearchOptions, ClientConfig } from "./types";
+import type { Icon, SearchResponse, SearchOptions, ClientConfig, Collection } from "./types";
 
 export class IconsClient {
   private baseUrl: string;
@@ -60,6 +60,12 @@ export class IconsClient {
   async getCategories(): Promise<{ name: string; count: number }[]> {
     const res = await fetch(`${this.baseUrl}/categories`, { headers: this.headers() });
     if (!res.ok) throw new Error(`Categories failed: ${res.status}`);
+    return res.json();
+  }
+
+  async getCollections(): Promise<Collection[]> {
+    const res = await fetch(`${this.baseUrl}/collections`, { headers: this.headers() });
+    if (!res.ok) throw new Error(`Collections failed: ${res.status}`);
     return res.json();
   }
 }
