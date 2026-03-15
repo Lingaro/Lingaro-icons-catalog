@@ -4,7 +4,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 
-from ..dependencies import get_database
+from ..dependencies import get_database, require_auth
 from ..models import SearchRequest, SearchResponse, IconResponse
 from ..services.search import SearchService
 
@@ -18,6 +18,7 @@ async def search_icons(
     set: Optional[str] = None,
     limit: int = Query(50, ge=1, le=200),
     semantic: bool = True,
+    user=Depends(require_auth),
     db=Depends(get_database),
 ):
     search = SearchService(db)
@@ -33,7 +34,7 @@ async def search_icons(
 
 
 @router.post("/search")
-async def search_icons_post(request: SearchRequest, db=Depends(get_database)):
+async def search_icons_post(request: SearchRequest, user=Depends(require_auth), db=Depends(get_database)):
     search = SearchService(db)
     if request.semantic:
         results = search.semantic_search(request.query, request.category, request.set, request.limit)

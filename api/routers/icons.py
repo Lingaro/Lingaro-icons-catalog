@@ -9,7 +9,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPExcepti
 from fastapi.responses import Response
 
 from ..database import insert_icon, update_icon, delete_icon, get_icon, get_db
-from ..dependencies import get_database, get_storage_backend, require_api_key
+from ..dependencies import get_database, get_storage_backend, require_auth, require_admin
 from ..models import IconResponse, IconUpdate
 from ..services.annotation import annotate_icon as run_annotation
 from ..services.embeddings import create_icon_text, generate_embedding
@@ -75,6 +75,7 @@ async def list_icons(
     set: Optional[str] = None,
     limit: int = Query(100, ge=1, le=500),
     offset: int = Query(0, ge=0),
+    user=Depends(require_auth),
     db=Depends(get_database),
 ):
     search = SearchService(db)
@@ -82,7 +83,7 @@ async def list_icons(
 
 
 @router.get("/{icon_id}")
-async def get_icon_detail(icon_id: str, db=Depends(get_database)):
+async def get_icon_detail(icon_id: str, user=Depends(require_auth), db=Depends(get_database)):
     search = SearchService(db)
     icon = search.get_icon_by_id(icon_id)
     if not icon:
@@ -97,7 +98,7 @@ async def upload_icon(
     category: str = Form(...),
     set_name: str = Form("lingaro_set4"),
     name: Optional[str] = Form(None),
-    _auth=Depends(require_api_key),
+    _auth=Depends(require_admin),
     db=Depends(get_database),
     storage=Depends(get_storage_backend),
 ):
@@ -126,7 +127,7 @@ async def upload_icon(
 @router.patch("/{icon_id}")
 async def update_icon_metadata(
     icon_id: str, update: IconUpdate,
-    _auth=Depends(require_api_key), db=Depends(get_database),
+    _auth=Depends(require_admin), db=Depends(get_database),
 ):
     icon = get_icon(db, icon_id)
     if not icon:
@@ -144,7 +145,7 @@ async def update_icon_metadata(
 
 @router.delete("/{icon_id}", status_code=204)
 async def delete_icon_endpoint(
-    icon_id: str, _auth=Depends(require_api_key),
+    icon_id: str, _auth=Depends(require_admin),
     db=Depends(get_database), storage=Depends(get_storage_backend),
 ):
     icon = get_icon(db, icon_id)
@@ -157,7 +158,7 @@ async def delete_icon_endpoint(
 
 @router.get("/{icon_id}/file")
 async def get_icon_file(
-    icon_id: str, db=Depends(get_database), storage=Depends(get_storage_backend),
+    icon_id: str, user=Depends(require_auth), db=Depends(get_database), storage=Depends(get_storage_backend),
 ):
     icon = get_icon(db, icon_id)
     if not icon:
@@ -167,4 +168,7 @@ async def get_icon_file(
     if not data:
         raise HTTPException(404, "Icon file not found")
     content_type = "image/svg+xml" if icon["filename"].endswith(".svg") else "image/png"
-    return Response(content=data, media_type=content_type)
+    return Response(
+        content=data, media_type=content_type,
+        headers={"Cache-Control": "no-cache, must-revalidate"},
+    )

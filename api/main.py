@@ -12,9 +12,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from .auth import CurrentUser
 from .database import init_db, DEFAULT_DB_PATH
 from .models import HealthResponse, CatalogStats
-from .dependencies import get_database
+from .dependencies import get_database, require_auth
 from .services.search import SearchService
 from .routers import search, icons, categories, admin
 
@@ -49,9 +50,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+CORS_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://lingaro-icons-catalog.azurewebsites.net",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -87,8 +94,16 @@ async def health_check():
     return HealthResponse(status="ok", version="2.0.0")
 
 
+@app.get("/api/me")
+async def get_current_user(user: CurrentUser = Depends(require_auth)):
+    import os
+    admin_emails = [e.strip().lower() for e in os.getenv("ADMIN_EMAILS", "").split(",") if e.strip()]
+    user.is_admin = user.email.lower() in admin_emails or user.email in ("api-key-user", "dev-mode")
+    return {"email": user.email, "name": user.name, "is_admin": user.is_admin}
+
+
 @app.get("/api/stats")
-async def get_stats(db=Depends(get_database)):
+async def get_stats(user: CurrentUser = Depends(require_auth), db=Depends(get_database)):
     svc = SearchService(db)
     cats = svc.get_categories()
     sets_cursor = db.execute("SELECT DISTINCT set_name FROM icons WHERE status = 'ready'")
