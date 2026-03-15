@@ -6,41 +6,338 @@
 (function() {
   'use strict';
 
+  // --- MSAL Authentication ---
+  let msalInstance = null;
+  let currentAccount = null;
+  let currentUserInfo = null;
+
+  function initMsal() {
+    const config = window.MSAL_CONFIG;
+    if (!config || !config.clientId) return false;
+    msalInstance = new msal.PublicClientApplication({
+      auth: {
+        clientId: config.clientId,
+        authority: config.authority,
+        redirectUri: config.redirectUri,
+      },
+      cache: {
+        cacheLocation: 'sessionStorage',
+        storeAuthStateInCookie: false,
+      },
+    });
+    return true;
+  }
+
+  async function handleRedirectAndGetAccount() {
+    if (!msalInstance) return null;
+    try {
+      const response = await msalInstance.handleRedirectPromise();
+      if (response) return response.account;
+    } catch (e) {
+      console.error('MSAL redirect error:', e);
+    }
+    const accounts = msalInstance.getAllAccounts();
+    return accounts.length > 0 ? accounts[0] : null;
+  }
+
+  async function getIdToken() {
+    if (!msalInstance || !currentAccount) return null;
+    try {
+      const response = await msalInstance.acquireTokenSilent({
+        scopes: ['openid', 'profile', 'email'],
+        account: currentAccount,
+      });
+      return response.idToken;
+    } catch (e) {
+      console.warn('Silent token acquisition failed, redirecting to login:', e);
+      msalInstance.acquireTokenRedirect({ scopes: ['openid', 'profile', 'email'] });
+      return null;
+    }
+  }
+
+  async function authFetch(url, options = {}) {
+    const token = await getIdToken();
+    if (token) {
+      options.headers = options.headers || {};
+      if (options.headers instanceof Headers) {
+        options.headers.set('Authorization', `Bearer ${token}`);
+      } else {
+        options.headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+    return fetch(url, options);
+  }
+
+  function signIn() {
+    if (!msalInstance) return;
+    msalInstance.loginRedirect({ scopes: ['openid', 'profile', 'email'] });
+  }
+
+  function signOut() {
+    if (!msalInstance) return;
+    msalInstance.logoutRedirect({ postLogoutRedirectUri: window.location.origin });
+  }
+
   // State
   let iconsData = null;
   let filteredIcons = [];
   let currentQuery = '';
   let currentCategory = '';
   let selectedCollections = new Set(); // Multi-select collections
+  let collectionsData = null;
+  let currentView = 'landing'; // 'landing' or 'browse'
+  let currentCollection = null; // set_name for browse view
+  let browseListenersAttached = false; // prevent duplicate event listeners
 
   // DOM elements (initialized after DOM ready)
-  let searchInput, clearButton, categoryFilter, collectionsFilter, resultsCount, iconsGrid;
+  let searchInput, clearButton, categoryFilter, resultsCount, iconsGrid;
 
   // Initialize
   document.addEventListener('DOMContentLoaded', init);
 
   async function init() {
     try {
-      // Get DOM elements after DOM is ready
-      searchInput = document.getElementById('search-input');
-      clearButton = document.getElementById('clear-search');
-      categoryFilter = document.getElementById('category-filter');
-      collectionsFilter = document.getElementById('collections-filter');
-      resultsCount = document.getElementById('results-count');
-      iconsGrid = document.querySelector('.icons-grid');
+      const msalEnabled = initMsal();
 
-      await loadIconsData();
+      if (msalEnabled) {
+        currentAccount = await handleRedirectAndGetAccount();
 
-      if (!iconsData) {
-        console.error('Failed to load icons data');
-        return;
+        if (!currentAccount) {
+          document.getElementById('login-screen').style.display = 'flex';
+          document.getElementById('sign-in-btn').addEventListener('click', signIn);
+          return;
+        }
+
+        document.getElementById('login-screen').style.display = 'none';
+
+        try {
+          const apiBase = window.API_URL || '';
+          const meRes = await authFetch(`${apiBase}/api/me`);
+          if (meRes.ok) {
+            currentUserInfo = await meRes.json();
+            const userInfoEl = document.getElementById('user-info');
+            const userNameEl = document.getElementById('user-name');
+            const adminBadge = document.getElementById('admin-badge');
+            if (userInfoEl) userInfoEl.style.display = 'flex';
+            if (userNameEl) userNameEl.textContent = currentUserInfo.name || currentUserInfo.email;
+            if (adminBadge && currentUserInfo.is_admin) adminBadge.style.display = '';
+          }
+        } catch (e) {
+          console.error('Failed to fetch user info:', e);
+        }
+
+        const signOutBtn = document.getElementById('sign-out-btn');
+        if (signOutBtn) signOutBtn.addEventListener('click', signOut);
       }
 
-      setupEventListeners();
-      populateFilters();
-      renderIcons(iconsData.icons);
+      await loadCollections();
+
+      const hash = window.location.hash;
+      const collectionMatch = hash.match(/collection=(.+)/);
+
+      if (collectionMatch) {
+        const collectionName = decodeURIComponent(collectionMatch[1]);
+        await showBrowseView(collectionName);
+      } else {
+        showLandingView();
+      }
+
+      const landingSearch = document.getElementById('landing-search-input');
+      if (landingSearch) {
+        landingSearch.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && landingSearch.value.trim()) {
+            showBrowseView(null, landingSearch.value.trim());
+          }
+        });
+      }
+
+      const backBtn = document.getElementById('back-to-landing');
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          history.pushState(null, '', window.location.pathname);
+          showLandingView();
+        });
+      }
+
+      function handleNavigation() {
+        const h = window.location.hash;
+        const m = h.match(/collection=(.+)/);
+        if (m) {
+          showBrowseView(decodeURIComponent(m[1]));
+        } else {
+          showLandingView();
+        }
+      }
+      window.addEventListener('hashchange', handleNavigation);
+      window.addEventListener('popstate', handleNavigation);
     } catch (error) {
       console.error('Init error:', error);
+    }
+  }
+
+  async function loadCollections() {
+    try {
+      const apiBase = window.API_URL || '';
+      const res = await authFetch(`${apiBase}/api/collections`);
+      collectionsData = await res.json();
+      // Update footer count
+      const totalIcons = collectionsData.reduce((sum, c) => sum + c.icon_count, 0);
+      const footerCount = document.getElementById('footer-count');
+      if (footerCount) footerCount.textContent = totalIcons;
+    } catch (e) {
+      console.error('Failed to load collections:', e);
+      collectionsData = [];
+    }
+  }
+
+  function renderCollectionCards() {
+    const grid = document.getElementById('collections-grid');
+    if (!grid || !collectionsData) return;
+    const apiBase = window.API_URL || '';
+
+    grid.innerHTML = collectionsData
+      .filter(c => c.name !== 'test_set')
+      .map(c => {
+        const displayName = formatCollectionName(c.name);
+        const coverUrl = c.cover_icon_id
+          ? `${apiBase}/api/icons/${c.cover_icon_id}/file`
+          : '';
+        const cats = c.categories.slice(0, 5)
+          .map(cat => `<span class="collection-card-cat">${cat}</span>`)
+          .join('');
+        const moreCats = c.categories.length > 5
+          ? `<span class="collection-card-cat">+${c.categories.length - 5} more</span>`
+          : '';
+        const refreshProviders = { 'Azure': 'azure', 'Google Cloud': 'gcp' };
+        const isAdmin = new URLSearchParams(window.location.search).has('admin');
+        const refreshKey = refreshProviders[c.name];
+        const refreshBtn = (refreshKey && isAdmin)
+          ? `<button class="collection-card-refresh" data-refresh="${refreshKey}" title="Refresh icons from official source">
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                 <path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/>
+               </svg>
+             </button>`
+          : '';
+        return `
+          <div class="collection-card" data-collection="${c.name}">
+            <div class="collection-card-icon">
+              ${coverUrl ? `<img src="${coverUrl}" alt="${displayName}">` : ''}
+            </div>
+            <div class="collection-card-body">
+              <div class="collection-card-name">${displayName}${refreshBtn}</div>
+              <div class="collection-card-count">${c.icon_count} icon${c.icon_count !== 1 ? 's' : ''}</div>
+              <div class="collection-card-categories">${cats}${moreCats}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+    // Refresh button handlers (stop propagation so card click doesn't fire)
+    grid.querySelectorAll('.collection-card-refresh').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const provider = btn.dataset.refresh; // 'azure' or 'gcp'
+        const endpoint = `/api/admin/refresh-${provider}-icons`;
+        const apiKey = prompt('Enter API key to refresh icons:');
+        if (!apiKey) return;
+        btn.classList.add('spinning');
+        btn.disabled = true;
+        try {
+          const headers = { 'X-API-Key': apiKey };
+          const res = await authFetch(`${apiBase}${endpoint}`, { method: 'POST', headers });
+          const data = await res.json();
+          if (data.status === 'started' || data.status === 'already_running') {
+            const poll = setInterval(async () => {
+              const sr = await authFetch(`${apiBase}${endpoint}/status`);
+              const st = await sr.json();
+              if (!st.running) {
+                clearInterval(poll);
+                btn.classList.remove('spinning');
+                btn.disabled = false;
+                const r = st.last_result;
+                if (r && !r.error) {
+                  alert(`Icons refreshed!\nAdded: ${r.added}, Removed: ${r.removed}, Unchanged: ${r.unchanged}, Total: ${r.total}`);
+                  await loadCollections();
+                  renderCollectionCards();
+                } else {
+                  alert(`Refresh failed: ${r ? r.error : 'Unknown error'}`);
+                }
+              }
+            }, 2000);
+          }
+        } catch (err) {
+          btn.classList.remove('spinning');
+          btn.disabled = false;
+          alert('Failed to start refresh: ' + err.message);
+        }
+      });
+    });
+
+    // Click handlers — only set hash, let hashchange handle navigation
+    grid.querySelectorAll('.collection-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const name = card.dataset.collection;
+        window.location.hash = `collection=${encodeURIComponent(name)}`;
+      });
+    });
+  }
+
+  function formatCollectionName(name) {
+    return name
+      .replace(/_/g, ' ')
+      .replace(/([a-z])(\d)/g, '$1 $2')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function showLandingView() {
+    currentView = 'landing';
+    currentCollection = null;
+    document.getElementById('landing-view').style.display = '';
+    document.getElementById('browse-view').style.display = 'none';
+    renderCollectionCards();
+  }
+
+  async function showBrowseView(collectionName, searchQuery) {
+    currentView = 'browse';
+    currentCollection = collectionName;
+    document.getElementById('landing-view').style.display = 'none';
+    document.getElementById('browse-view').style.display = '';
+
+    // Update title
+    const title = document.getElementById('browse-collection-title');
+    if (title) {
+      title.textContent = collectionName
+        ? formatCollectionName(collectionName)
+        : 'All Collections';
+    }
+
+    // Initialize browse view DOM refs
+    searchInput = document.getElementById('search-input');
+    clearButton = document.getElementById('clear-search');
+    categoryFilter = document.getElementById('category-filter');
+    resultsCount = document.getElementById('results-count');
+    iconsGrid = document.querySelector('#browse-view .icons-grid');
+
+    // Load icons for this collection
+    selectedCollections = new Set();
+    if (collectionName) {
+      selectedCollections.add(collectionName);
+    }
+
+    await loadIconsData();
+    if (!iconsData) return;
+
+    if (!browseListenersAttached) {
+      setupEventListeners();
+      browseListenersAttached = true;
+    }
+    populateFilters();
+
+    if (searchQuery) {
+      searchInput.value = searchQuery;
+      currentQuery = searchQuery;
+      handleSearch();
+    } else {
+      renderIcons(iconsData.icons);
     }
   }
 
@@ -53,21 +350,24 @@
       // Try loading from API first
       try {
         const [iconsRes, catsRes] = await Promise.all([
-          fetch(`${apiBase}/api/icons?limit=500`),
-          fetch(`${apiBase}/api/categories`),
+          authFetch(`${apiBase}/api/icons?limit=500${currentCollection ? '&set=' + encodeURIComponent(currentCollection) : ''}`),
+          authFetch(`${apiBase}/api/categories`),
         ]);
 
         if (iconsRes.ok && catsRes.ok) {
           const icons = await iconsRes.json();
           const categories = await catsRes.json();
-          const sets = [...new Set(icons.map(i => i.set || i.set_name).filter(Boolean))];
+          const mappedIcons = icons.map(i => ({
+            ...i,
+            set: i.set || i.set_name,
+            format: (i.filename || '').endsWith('.png') ? 'png' : 'svg',
+          }));
+          const sets = [...new Set(mappedIcons.map(i => i.set).filter(Boolean))];
+          // Derive categories from loaded icons (respects collection filter)
+          const iconCats = [...new Set(mappedIcons.map(i => i.category).filter(Boolean))].sort();
           iconsData = {
-            icons: icons.map(i => ({
-              ...i,
-              set: i.set || i.set_name,
-              format: (i.filename || '').endsWith('.png') ? 'png' : 'svg',
-            })),
-            categories: categories.map(c => c.name || c),
+            icons: mappedIcons,
+            categories: iconCats,
             sets,
           };
           filteredIcons = iconsData.icons;
@@ -131,34 +431,15 @@
   function populateFilters() {
     try {
       if (!iconsData) {
-        if (collectionsFilter) collectionsFilter.innerHTML = '<span style="color:red">Error: No data</span>';
         return;
-      }
-
-      // Populate collections (sets) as checkboxes
-      const filterEl = document.getElementById('collections-filter');
-      const sets = iconsData.sets || [];
-
-      if (filterEl && sets.length > 0) {
-        let html = '';
-        for (const set of sets) {
-          const count = iconsData.icons.filter(i => i.set === set).length;
-          const displayName = formatSetName(set);
-          html += `<label class="collection-checkbox">
-            <input type="checkbox" value="${set}" checked>
-            <span class="collection-name">${displayName}</span>
-            <span class="collection-count">(${count})</span>
-          </label>`;
-          selectedCollections.add(set);
-        }
-        filterEl.innerHTML = html;
-        filterEl.addEventListener('change', handleCollectionChange);
-      } else {
-        if (filterEl) filterEl.innerHTML = '<span style="color:red">No collections found</span>';
       }
 
       // Populate category dropdown
       if (categoryFilter && iconsData.categories) {
+        // Clear existing options (keep the first "All categories" option)
+        while (categoryFilter.options.length > 1) {
+          categoryFilter.remove(1);
+        }
         iconsData.categories.forEach(cat => {
           const option = document.createElement('option');
           option.value = cat;
@@ -168,8 +449,6 @@
       }
     } catch (error) {
       console.error('populateFilters error:', error);
-      const filterEl = document.getElementById('collections-filter');
-      if (filterEl) filterEl.innerHTML = '<span style="color:red">Error: ' + error.message + '</span>';
     }
   }
 
@@ -876,6 +1155,28 @@
     document.body.appendChild(modal);
     document.body.classList.add('modal-open');
 
+    // Inline SVG for proper scaling (SVGs with hardcoded width/height don't scale via <img>)
+    const previewEl = modal.querySelector('.modal-icon-preview');
+    const iconPath = previewEl.dataset.iconPath;
+    if (iconPath && iconPath.endsWith('.svg')) {
+      fetch(`${window.BASE_URL || ''}/${iconPath}`)
+        .then(r => r.text())
+        .then(svgText => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(svgText, 'image/svg+xml');
+          const svg = doc.querySelector('svg');
+          if (svg) {
+            svg.removeAttribute('width');
+            svg.removeAttribute('height');
+            svg.style.width = '100%';
+            svg.style.height = '100%';
+            previewEl.innerHTML = '';
+            previewEl.appendChild(svg);
+          }
+        })
+        .catch(() => {}); // keep <img> fallback on error
+    }
+
     // Trigger animation
     requestAnimationFrame(() => modal.classList.add('show'));
 
@@ -999,7 +1300,7 @@
     saveButton.disabled = true;
 
     try {
-      const response = await fetch(`${window.API_URL || ''}/api/icons/${encodeURIComponent(iconId)}`, {
+      const response = await authFetch(`${window.API_URL || ''}/api/icons/${encodeURIComponent(iconId)}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -1182,7 +1483,7 @@
         </button>
 
         <div class="modal-body">
-          <div class="modal-icon-preview">
+          <div class="modal-icon-preview" data-icon-path="${escapeHtml(icon.path)}">
             <img src="${window.BASE_URL || ''}/${escapeHtml(icon.path)}" alt="${escapeHtml(icon.name)}">
           </div>
 
@@ -1275,9 +1576,15 @@
               </svg>
               From URL
             </button>
+            <button class="add-icon-tab" data-tab="folder">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+              </svg>
+              Upload Folder
+            </button>
           </div>
 
-          <form id="upload-form" class="edit-form" style="display:block;border:none;margin:0;padding:0;">
+          <form id="upload-form" class="edit-form" novalidate style="display:block;border:none;margin:0;padding:0;">
             <!-- Upload tab -->
             <div id="tab-upload" class="add-icon-tab-content">
               <div class="form-group">
@@ -1295,13 +1602,27 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="upload-name">Name (optional, defaults to filename)</label>
-              <input type="text" id="upload-name" placeholder="e.g. Cloud Database">
+            <!-- Folder tab -->
+            <div id="tab-folder" class="add-icon-tab-content" style="display:none;">
+              <div class="form-group">
+                <label for="upload-folder">Select folder with icons (subfolders = categories)</label>
+                <input type="file" id="upload-folder" multiple
+                  style="padding:10px 12px;border:1px solid #e5e5f0;border-radius:6px;width:100%;font-size:0.875rem;background:#fff;">
+              </div>
+              <div id="folder-summary" style="display:none;margin-bottom:16px;padding:12px;background:#f8f8fc;border-radius:8px;font-size:0.85rem;">
+              </div>
             </div>
-            <div class="form-group">
-              <label for="upload-category">Category</label>
-              <input type="text" id="upload-category" placeholder="e.g. Data Analysis Charts" required>
+
+            <!-- Shared fields for upload/link tabs -->
+            <div id="single-upload-fields">
+              <div class="form-group">
+                <label for="upload-name">Name (optional, defaults to filename)</label>
+                <input type="text" id="upload-name" placeholder="e.g. Cloud Database">
+              </div>
+              <div class="form-group">
+                <label for="upload-category">Category</label>
+                <input type="text" id="upload-category" placeholder="e.g. Data Analysis Charts" required>
+              </div>
             </div>
             <div class="form-group">
               <label for="upload-set">Collection</label>
@@ -1328,6 +1649,11 @@
     document.body.classList.add('modal-open');
     requestAnimationFrame(() => modal.classList.add('show'));
 
+    // Set webkitdirectory programmatically (more reliable than HTML attribute)
+    const folderEl = modal.querySelector('#upload-folder');
+    folderEl.webkitdirectory = true;
+    folderEl.directory = true; // Firefox compat
+
     // Tab switching
     let activeTab = 'upload';
     modal.querySelectorAll('.add-icon-tab').forEach(tab => {
@@ -1337,6 +1663,13 @@
         tab.classList.add('active');
         modal.querySelector('#tab-upload').style.display = activeTab === 'upload' ? '' : 'none';
         modal.querySelector('#tab-link').style.display = activeTab === 'link' ? '' : 'none';
+        modal.querySelector('#tab-folder').style.display = activeTab === 'folder' ? '' : 'none';
+        // Hide name/category fields for folder tab (derived from folder structure)
+        modal.querySelector('#single-upload-fields').style.display = activeTab === 'folder' ? 'none' : '';
+        // Update category required attribute
+        modal.querySelector('#upload-category').required = activeTab !== 'folder';
+        // Update submit button text
+        modal.querySelector('#upload-submit').textContent = activeTab === 'folder' ? 'Upload All' : 'Add & Annotate';
         // Update preview
         const preview = modal.querySelector('#upload-preview');
         preview.style.display = 'none';
@@ -1360,6 +1693,22 @@
       }
     });
 
+    // Folder input change — show summary
+    modal.querySelector('#upload-folder').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files).filter(f => /\.(svg|png)$/i.test(f.name));
+      const summary = modal.querySelector('#folder-summary');
+      if (files.length === 0) {
+        summary.style.display = 'none';
+        return;
+      }
+      const parsed = parseFolderFiles(files);
+      const catList = Object.entries(parsed)
+        .map(([cat, items]) => `<strong>${cat}</strong>: ${items.length} icon${items.length !== 1 ? 's' : ''}`)
+        .join('<br>');
+      summary.innerHTML = `<div style="margin-bottom:8px;font-weight:600;">Found ${files.length} icons in ${Object.keys(parsed).length} categories:</div>${catList}`;
+      summary.style.display = '';
+    });
+
     // URL preview on blur
     modal.querySelector('#upload-url').addEventListener('blur', (e) => {
       const url = e.target.value.trim();
@@ -1376,6 +1725,8 @@
       e.preventDefault();
       if (activeTab === 'upload') {
         handleUploadSubmit(modal);
+      } else if (activeTab === 'folder') {
+        handleFolderUpload(modal);
       } else {
         handleLinkSubmit(modal);
       }
@@ -1438,7 +1789,7 @@
     if (apiKey) headers['X-API-Key'] = apiKey;
 
     try {
-      const response = await fetch(`${window.API_URL || ''}/api/icons`, {
+      const response = await authFetch(`${window.API_URL || ''}/api/icons`, {
         method: 'POST',
         headers,
         body: formData,
@@ -1520,7 +1871,7 @@
       const headers = {};
       if (apiKey) headers['X-API-Key'] = apiKey;
 
-      const response = await fetch(`${window.API_URL || ''}/api/icons`, {
+      const response = await authFetch(`${window.API_URL || ''}/api/icons`, {
         method: 'POST',
         headers,
         body: formData,
@@ -1549,9 +1900,125 @@
 
   function showUploadStatus(el, message, type) {
     el.style.display = 'block';
-    el.textContent = message;
+    el.innerHTML = message;
     el.style.background = type === 'error' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)';
     el.style.color = type === 'error' ? '#dc2626' : '#059669';
+  }
+
+  /**
+   * Parse folder files into { category: [{file, cleanName}] } structure.
+   * Folder name = category, filename cleaned of numbers and special chars.
+   */
+  function parseFolderFiles(files) {
+    const categories = {};
+    for (const file of files) {
+      // webkitRelativePath: "FolderName/SubFolder/file.svg"
+      const parts = file.webkitRelativePath.split('/');
+      // Use immediate parent folder as category, or root folder if no subfolder
+      let category;
+      if (parts.length >= 3) {
+        // e.g. "MyIcons/DataCharts/icon.svg" → category = "DataCharts"
+        category = parts[parts.length - 2];
+      } else if (parts.length === 2) {
+        // e.g. "MyIcons/icon.svg" → category from root folder name
+        category = parts[0];
+      } else {
+        category = 'General';
+      }
+      // Clean icon name from filename: remove extension, replace separators with spaces
+      const rawName = file.name.replace(/\.(svg|png)$/i, '');
+      const cleanName = rawName
+        .replace(/[_\-]+/g, ' ')      // replace _ and - with space
+        .replace(/\s+/g, ' ')         // collapse whitespace
+        .trim();
+      const iconName = cleanName || rawName;
+
+      if (!categories[category]) categories[category] = [];
+      categories[category].push({ file, cleanName: iconName });
+    }
+    return categories;
+  }
+
+  /**
+   * Handle bulk folder upload — upload all icons sequentially.
+   */
+  async function handleFolderUpload(modal) {
+    const folderInput = modal.querySelector('#upload-folder');
+    const setInput = modal.querySelector('#upload-set');
+    const apiKeyInput = modal.querySelector('#upload-api-key');
+    const submitBtn = modal.querySelector('#upload-submit');
+    const statusEl = modal.querySelector('#upload-status');
+
+    const rawFiles = Array.from(folderInput.files);
+    const allFiles = rawFiles.filter(f => /\.(svg|png)$/i.test(f.name));
+    if (allFiles.length === 0) {
+      const msg = rawFiles.length === 0
+        ? 'No folder selected — please choose a folder first'
+        : `Found ${rawFiles.length} files but none are SVG or PNG`;
+      showUploadStatus(statusEl, msg, 'error');
+      return;
+    }
+
+    const parsed = parseFolderFiles(allFiles);
+    const setName = setInput.value.trim() || 'lingaro_set4';
+    const apiKey = apiKeyInput.value.trim();
+    const headers = {};
+    if (apiKey) headers['X-API-Key'] = apiKey;
+
+    submitBtn.disabled = true;
+    let uploaded = 0;
+    let failed = 0;
+    const total = allFiles.length;
+    const errors = [];
+
+    for (const [category, items] of Object.entries(parsed)) {
+      for (const { file, cleanName } of items) {
+        uploaded++;
+        submitBtn.textContent = `Uploading ${uploaded}/${total}...`;
+        showUploadStatus(statusEl,
+          `Uploading <strong>${cleanName}</strong> to <strong>${category}</strong> (${uploaded}/${total})...`, 'success');
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('category', category);
+        formData.append('set_name', setName);
+        formData.append('name', cleanName);
+
+        try {
+          const response = await authFetch(`${window.API_URL || ''}/api/icons`, {
+            method: 'POST',
+            headers,
+            body: formData,
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            failed++;
+            errors.push(`${cleanName}: ${data.detail || 'failed'}`);
+          }
+        } catch (err) {
+          failed++;
+          errors.push(`${cleanName}: ${err.message}`);
+        }
+      }
+    }
+
+    // Final summary
+    const successCount = total - failed;
+    let msg = `Done! ${successCount}/${total} icons uploaded to collection <strong>${setName}</strong>.`;
+    if (failed > 0) {
+      msg += `<br>${failed} failed: ${errors.slice(0, 5).join(', ')}${errors.length > 5 ? '...' : ''}`;
+    }
+    showUploadStatus(statusEl, msg, failed > 0 ? 'error' : 'success');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Done';
+    if (successCount > 0) {
+      showToast(`${successCount} icons uploaded!`, 'success');
+      await loadCollections();
+      if (currentView === 'browse') {
+        await loadIconsData();
+        applyFilters();
+      }
+    }
   }
 
   // Initialize upload button after DOM ready

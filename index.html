@@ -11,6 +11,17 @@
   <link rel="icon" type="image/svg+xml" href="icons/lingaro_set4/Absract/Idea.svg">
 </head>
 <body>
+  <div id="login-screen" class="login-screen" style="display:none">
+    <div class="login-card">
+      <img src="assets/branding/Lingaro-Group.webp" alt="Lingaro" class="login-logo">
+      <h1 class="login-title">Icons Catalog</h1>
+      <p class="login-subtitle">Sign in with your Lingaro account to continue</p>
+      <button class="login-btn" id="sign-in-btn" type="button">
+        <svg width="20" height="20" viewBox="0 0 23 23" fill="none"><path fill="#f25022" d="M1 1h10v10H1z"/><path fill="#00a4ef" d="M1 12h10v10H1z"/><path fill="#7fba00" d="M12 1h10v10H12z"/><path fill="#ffb900" d="M12 12h10v10H12z"/></svg>
+        Sign in with Microsoft
+      </button>
+    </div>
+  </div>
   <header class="header">
     <div class="container">
       <a href="/" class="logo">
@@ -26,6 +37,11 @@
           </svg>
           Add Icon
         </button>
+        <div class="user-info" id="user-info" style="display:none">
+          <span class="user-name" id="user-name"></span>
+          <span class="admin-badge" id="admin-badge" style="display:none">Admin</span>
+          <button class="nav-link" id="sign-out-btn" type="button">Sign Out</button>
+        </div>
       </nav>
     </div>
   </header>
@@ -34,7 +50,9 @@
     <div class="hero-wave">
       <img src="assets/branding/lingaro-wave.webp" alt="" aria-hidden="true">
     </div>
-    <div class="container">
+
+    <!-- LANDING VIEW -->
+    <div id="landing-view" class="container">
       <section class="hero">
         <h1 class="hero-title"><img src="assets/branding/lingaro-logo.png" alt="Lingaro" class="hero-logo"> <span>Icons</span> Catalog</h1>
         <p class="hero-subtitle">
@@ -42,6 +60,38 @@
           AI-powered semantic search helps you find the perfect icon.
         </p>
       </section>
+
+      <div class="landing-search-container">
+        <div class="search-box">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" class="search-input" id="landing-search-input" placeholder="Search icons across all collections...">
+        </div>
+      </div>
+
+      <section class="collections-section">
+        <div class="collections-grid" id="collections-grid">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <span>Loading collections...</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- BROWSE VIEW (hidden by default) -->
+    <div id="browse-view" class="container" style="display:none">
+      <div class="browse-header">
+        <button class="btn btn--back" id="back-to-landing" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          All Collections
+        </button>
+        <h2 class="browse-collection-title" id="browse-collection-title"></h2>
+      </div>
 
       <div class="search-container">
         <div class="search-box">
@@ -57,12 +107,6 @@
           </button>
         </div>
         <div class="search-filters">
-          <div class="filter-group filter-group--collections">
-            <label class="filter-label">Collections:</label>
-            <div id="collections-filter" class="collections-checkboxes">
-              <span class="loading-text">Loading collections...</span>
-            </div>
-          </div>
           <div class="filter-group">
             <label class="filter-label">Category:</label>
             <select class="filter-select" id="category-filter">
@@ -86,15 +130,21 @@
 
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2024 Lingaro. 248 icons available.</p>
+      <p>&copy; 2024 Lingaro. <span id="footer-count">248</span> icons available.</p>
       <p class="footer-tech">Built with AI-powered semantic search</p>
     </div>
   </footer>
 
+  <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
   <script>
     window.ICONS_DATA_URL = 'assets/data/icons.json';
     window.BASE_URL = '';
     window.API_URL = '';
+    window.MSAL_CONFIG = {
+      clientId: 'aa55ba68-4d3e-46bb-a4a2-d1d38c431a06',
+      authority: 'https://login.microsoftonline.com/2ee548e1-6be8-4729-b86e-f482e29d2c9f',
+      redirectUri: window.location.origin,
+    };
   </script>
   <script src="assets/js/search.js"></script>
 </body>
