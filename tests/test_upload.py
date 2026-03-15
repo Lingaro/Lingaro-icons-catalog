@@ -18,13 +18,18 @@ def app_client(tmp_path, monkeypatch):
     monkeypatch.setenv("STORAGE_BACKEND", "local")
     # Patch LocalStorage base_dir
     import api.services.storage as storage_mod
-    original_get = storage_mod.get_storage
     def patched_get():
         return storage_mod.LocalStorage(base_dir=icons_dir)
     monkeypatch.setattr(storage_mod, "get_storage", patched_get)
 
     init_db(db_path)
     from api.main import app
+    # Ensure dev mode AFTER import (load_dotenv may restore env vars from .env)
+    monkeypatch.delenv("AZURE_CLIENT_ID", raising=False)
+    monkeypatch.delenv("AZURE_TENANT_ID", raising=False)
+    monkeypatch.delenv("API_KEY", raising=False)
+    import api.dependencies as deps
+    deps._validator = None
     return TestClient(app)
 
 
