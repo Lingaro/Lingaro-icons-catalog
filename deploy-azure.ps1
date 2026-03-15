@@ -225,7 +225,10 @@ Write-Step "Configuring App Settings..."
 
 $settings = @(
     "SCM_DO_BUILD_DURING_DEPLOYMENT=true",
-    "WEBSITE_RUN_FROM_PACKAGE=0"
+    "WEBSITE_RUN_FROM_PACKAGE=0",
+    "AZURE_CLIENT_ID=aa55ba68-4d3e-46bb-a4a2-d1d38c431a06",
+    "AZURE_TENANT_ID=2ee548e1-6be8-4729-b86e-f482e29d2c9f",
+    "ADMIN_EMAILS=piotr.palka@lingarogroup.com"
 )
 
 if ($OpenAIKey) {
