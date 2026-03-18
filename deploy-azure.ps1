@@ -19,6 +19,9 @@
 .PARAMETER OpenAIKey
     Your OpenAI API key for semantic search
 
+.PARAMETER ApiKey
+    Static API key for CLI/agent access (machine-to-machine auth). Do not hardcode — pass at deploy time.
+
 .PARAMETER SkipZip
     Skip creating the ZIP file (use existing)
 
@@ -49,7 +52,8 @@ param(
     [string]$OpenAIKey = "sk--ousUN3HvMYwfzmEivgkgQ",
     [string]$OpenAIBaseURL = "https://llm.lingarogroup.com",
     [switch]$SkipZip,
-    [switch]$ZipOnly
+    [switch]$ZipOnly,
+    [string]$ApiKey = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -237,6 +241,14 @@ if ($OpenAIKey) {
 } else {
     Write-Info "No OpenAI key provided - semantic search will be disabled"
     Write-Info "Add it later: az webapp config appsettings set --name $AppName --resource-group $ResourceGroup --settings OPENAI_API_KEY=your-key"
+}
+
+if ($ApiKey) {
+    $settings += "API_KEY=$ApiKey"
+    Write-Success "API key configured"
+} else {
+    Write-Info "No API key provided - CLI/agent auth will be disabled"
+    Write-Info "Pass -ApiKey <secret> to enable"
 }
 
 az webapp config appsettings set `
