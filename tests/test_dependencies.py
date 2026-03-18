@@ -130,11 +130,11 @@ class TestPATAuth:
         assert exc_info.value.status_code == 401
         assert "expired" in exc_info.value.detail.lower()
 
-    def test_unknown_key_raises_401(self):
+    def test_unknown_key_raises_401(self, tmp_path):
         """An unknown X-API-Key value returns 401."""
         from api.dependencies import _resolve_user
 
-        with patch.dict(os.environ, {"AZURE_CLIENT_ID": "cid"}):
+        with patch.dict(os.environ, {"AZURE_CLIENT_ID": "cid", "DATABASE_URL": str(tmp_path / "test.db")}):
             with pytest.raises(HTTPException) as exc_info:
                 _resolve_user(authorization=None, x_api_key="lingaro_unknowntoken000")
         assert exc_info.value.status_code == 401

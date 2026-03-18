@@ -56,6 +56,8 @@ def _lookup_pat_user(raw_token: str) -> Optional[CurrentUser]:
     token_hash = hash_token(raw_token)
     db_path = Path(os.getenv("DATABASE_URL", str(DEFAULT_DB_PATH)))
     init_db(db_path)
+    # Direct connection (not dependency-injected): _resolve_user is called before
+    # FastAPI's DI is active, so we manage our own connection here.
     conn = get_db(db_path)
     try:
         row = conn.execute(
