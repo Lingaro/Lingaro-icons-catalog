@@ -13,6 +13,7 @@ class CurrentUser:
     email: str
     name: str
     is_admin: bool = False
+    auth_method: str = "bearer"  # "bearer" | "api_key" | "pat"
 
 
 class AzureADTokenValidator:
