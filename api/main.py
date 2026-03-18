@@ -32,14 +32,16 @@ async def lifespan(app: FastAPI):
     from .database import get_db
     conn = get_db(db_path)
     count = conn.execute("SELECT COUNT(*) FROM icons").fetchone()[0]
-    conn.close()
     if count == 0:
         json_path = BASE_DIR / "assets" / "data" / "icons.json"
         if json_path.exists():
             from scripts.migrate_to_sqlite import migrate_icons_json
+            conn.close()
             imported = migrate_icons_json(json_path, db_path)
             print(f"Auto-seeded {imported} icons from icons.json")
+            conn = get_db(db_path)
 
+    conn.close()
     yield
 
 
