@@ -1,6 +1,5 @@
 """Unit tests for token utilities."""
 
-import pytest
 from datetime import datetime, timezone, timedelta
 
 
