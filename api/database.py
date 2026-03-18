@@ -32,6 +32,17 @@ CREATE TABLE IF NOT EXISTS categories (
 CREATE INDEX IF NOT EXISTS idx_icons_category ON icons(category);
 CREATE INDEX IF NOT EXISTS idx_icons_set ON icons(set_name);
 CREATE INDEX IF NOT EXISTS idx_icons_status ON icons(status);
+
+CREATE TABLE IF NOT EXISTS personal_tokens (
+    id TEXT PRIMARY KEY,
+    user_email TEXT NOT NULL UNIQUE,
+    token_hash TEXT NOT NULL,
+    name TEXT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_personal_tokens_hash ON personal_tokens(token_hash);
 """
 
 
@@ -138,3 +149,48 @@ def refresh_category_counts(conn: sqlite3.Connection) -> None:
            SELECT category, COUNT(*) FROM icons GROUP BY category"""
     )
     conn.commit()
+
+
+def sync_icons_from_filesystem(conn: sqlite3.Connection, icons_dir: Path) -> tuple[int, int]:
+    """Sync DB with filesystem: add new icons, remove stale ones.
+
+    Returns (added, removed) counts.
+    """
+    from scripts.scan_icons import scan_icons
+
+    icons_on_disk, _, _ = scan_icons(icons_dir)
+    disk_ids = {icon["id"] for icon in icons_on_disk}
+    disk_map = {icon["id"]: icon for icon in icons_on_disk}
+
+    # Existing IDs in DB
+    cursor = conn.execute("SELECT id FROM icons")
+    db_ids = {row[0] for row in cursor.fetchall()}
+
+    # Add new icons
+    added = 0
+    for icon_id in disk_ids - db_ids:
+        icon = disk_map[icon_id]
+        insert_icon(conn, {
+            "id": icon["id"],
+            "name": icon["name"],
+            "filename": icon["filename"],
+            "path": icon["path"],
+            "category": icon.get("category", ""),
+            "set_name": icon.get("set", ""),
+            "description": icon.get("description"),
+            "tags": icon.get("tags", []),
+            "use_cases": icon.get("use_cases", []),
+            "status": "ready",
+        })
+        added += 1
+
+    # Remove icons whose files no longer exist on disk
+    removed = 0
+    for icon_id in db_ids - disk_ids:
+        delete_icon(conn, icon_id)
+        removed += 1
+
+    if added or removed:
+        refresh_category_counts(conn)
+
+    return added, removed
