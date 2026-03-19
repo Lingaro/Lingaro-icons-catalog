@@ -17,7 +17,7 @@ from .database import init_db, DEFAULT_DB_PATH
 from .models import HealthResponse, CatalogStats
 from .dependencies import get_database, require_auth
 from .services.search import SearchService
-from .routers import search, icons, categories, admin
+from .routers import search, icons, categories, admin, tokens
 
 BASE_DIR = Path(__file__).parent.parent
 STATIC_INDEX = BASE_DIR / "index.html"
@@ -70,6 +70,7 @@ app.include_router(search.router)
 app.include_router(icons.router)
 app.include_router(categories.router)
 app.include_router(admin.router)
+app.include_router(tokens.router)
 
 if (BASE_DIR / "assets").exists():
     app.mount("/assets", StaticFiles(directory=str(BASE_DIR / "assets")), name="assets")
