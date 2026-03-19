@@ -40,6 +40,39 @@
         <div class="user-info" id="user-info" style="display:none">
           <span class="user-name" id="user-name"></span>
           <span class="admin-badge" id="admin-badge" style="display:none">Admin</span>
+          <!-- My Token panel -->
+          <div id="token-panel" style="display:none; margin-right: 12px;">
+            <!-- No token state -->
+            <div id="token-none">
+              <label><input type="radio" name="token-expires" value="30"> 30 days</label>
+              <label style="margin:0 6px;"><input type="radio" name="token-expires" value="60"> 60 days</label>
+              <label style="margin-right:6px;"><input type="radio" name="token-expires" value="90" checked> 90 days</label>
+              <input id="token-name-input" type="text" value="My CLI token"
+                     maxlength="100" style="margin-right:6px; width:140px;" />
+              <button onclick="generateToken()">Generate Token</button>
+            </div>
+            <!-- Token just generated state -->
+            <div id="token-new" style="display:none;">
+              <div style="background:#fff3cd; border:1px solid #ffc107; padding:6px 10px; border-radius:4px; margin-bottom:6px; font-size:13px;">
+                ⚠️ Copy this token now — it will not be shown again.
+              </div>
+              <input id="token-value" type="text" readonly style="width:400px; font-family:monospace;" />
+              <button onclick="copyToken()">Copy</button>
+              <button onclick="dismissToken()">Done</button>
+              <div id="token-expires-info" style="font-size:12px; color:#666; margin-top:4px;"></div>
+            </div>
+            <!-- Token exists (active) state -->
+            <div id="token-exists" style="display:none;">
+              <span id="token-meta" style="font-size:13px; color:#555; margin-right:8px;"></span>
+              <button onclick="revokeToken()">Revoke Token</button>
+            </div>
+            <!-- Token exists (expired) state -->
+            <div id="token-expired" style="display:none;">
+              <span id="token-expired-meta" style="font-size:13px; color:#555; margin-right:8px;"></span>
+              <span style="background:#dc3545; color:#fff; border-radius:3px; padding:1px 6px; font-size:11px; margin-right:8px;">Expired</span>
+              <button onclick="showTokenState('none')">Generate New Token</button>
+            </div>
+          </div>
           <button class="nav-link" id="sign-out-btn" type="button">Sign Out</button>
         </div>
       </nav>

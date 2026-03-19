@@ -121,6 +121,7 @@
             if (userInfoEl) userInfoEl.style.display = 'flex';
             if (userNameEl) userNameEl.textContent = currentUserInfo.name || currentUserInfo.email;
             if (adminBadge && currentUserInfo.is_admin) adminBadge.style.display = '';
+            loadTokenInfo();
           }
         } catch (e) {
           console.error('Failed to fetch user info:', e);
@@ -896,7 +897,7 @@
     });
   }
 
-  // Copy SVG as PNG image to clipboard (pasteable in PowerPoint)
+  // Copy SVG as PNG image to clipboard (pasteable in PowerPoint as image)
   async function copySvgToClipboard(path, element) {
     const fullUrl = `${window.location.origin}${window.BASE_URL || ''}/${path}`;
 
@@ -905,6 +906,9 @@
       const svgText = await response.text();
 
       // Convert SVG to PNG and copy as image (works in PowerPoint)
+      // Note: browser clipboard API cannot write SVG as vector format,
+      // so pasting in PPT creates an image. For editable shapes, use Download SVG
+      // and insert via Insert > Pictures in PowerPoint.
       try {
         const pngBlob = await svgToPngBlob(svgText);
         await navigator.clipboard.write([
@@ -2023,5 +2027,94 @@
 
   // Initialize upload button after DOM ready
   document.addEventListener('DOMContentLoaded', initUpload);
+
+  // ── Personal API Token management ─────────────────────────────────────────
+
+  async function loadTokenInfo() {
+    try {
+      const resp = await authFetch('/api/tokens/me');
+      if (resp.status === 404) {
+        showTokenState('none');
+      } else if (resp.ok) {
+        const data = await resp.json();
+        showTokenState(data.expired ? 'expired' : 'exists', data);
+      }
+    } catch (e) {
+      console.warn('Could not load token info', e);
+    }
+  }
+
+  function showTokenState(state, data) {
+    document.getElementById('token-panel').style.display = 'inline-block';
+    document.getElementById('token-none').style.display = state === 'none' ? 'inline-block' : 'none';
+    document.getElementById('token-new').style.display = state === 'new' ? 'block' : 'none';
+    document.getElementById('token-exists').style.display = state === 'exists' ? 'inline-block' : 'none';
+    document.getElementById('token-expired').style.display = state === 'expired' ? 'inline-block' : 'none';
+
+    if (state === 'exists' && data) {
+      const expires = new Date(data.expires_at).toLocaleDateString();
+      document.getElementById('token-meta').textContent =
+        `Token "${data.name}" — expires ${expires}`;
+    }
+    if (state === 'expired' && data) {
+      const expires = new Date(data.expires_at).toLocaleDateString();
+      document.getElementById('token-expired-meta').textContent =
+        `Token "${data.name}" — expired ${expires}`;
+    }
+  }
+
+  async function generateToken() {
+    const selected = document.querySelector('input[name="token-expires"]:checked');
+    const days = selected ? parseInt(selected.value) : 90;
+    const name = document.getElementById('token-name-input').value.trim() || 'My CLI token';
+    try {
+      const resp = await authFetch('/api/tokens/me', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ expires_days: days, name }),
+      });
+      if (!resp.ok) { alert('Failed to generate token'); return; }
+      const data = await resp.json();
+      document.getElementById('token-value').value = data.token;
+      document.getElementById('token-expires-info').textContent =
+        `Expires: ${new Date(data.expires_at).toLocaleDateString()}`;
+      showTokenState('new');
+    } catch (e) {
+      alert('Error generating token: ' + e.message);
+    }
+  }
+
+  function copyToken() {
+    const input = document.getElementById('token-value');
+    input.select();
+    navigator.clipboard.writeText(input.value).catch(() => {
+      document.execCommand('copy');
+    });
+  }
+
+  function dismissToken() {
+    loadTokenInfo();
+  }
+
+  async function revokeToken() {
+    if (!confirm('Revoke your API token? CLI access will stop working immediately.')) return;
+    try {
+      const resp = await authFetch('/api/tokens/me', { method: 'DELETE' });
+      if (resp.ok || resp.status === 404) {
+        showTokenState('none');
+      } else {
+        alert('Failed to revoke token');
+      }
+    } catch (e) {
+      alert('Error revoking token: ' + e.message);
+    }
+  }
+
+  // Expose token functions globally for inline onclick handlers
+  window.generateToken = generateToken;
+  window.copyToken = copyToken;
+  window.dismissToken = dismissToken;
+  window.revokeToken = revokeToken;
+  window.showTokenState = showTokenState;
 
 })();
