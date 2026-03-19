@@ -8,7 +8,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from ..auth import CurrentUser
-from ..database import get_db
 from ..dependencies import require_bearer_auth, get_database
 from ..services.token_utils import generate_token, hash_token, make_expires_at, is_expired
 

@@ -1,10 +1,7 @@
 """Integration tests for Personal API Token endpoints."""
 
 import os
-import sqlite3
-import tempfile
 from datetime import datetime, timezone, timedelta
-from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -14,22 +11,6 @@ from fastapi.testclient import TestClient
 @pytest.fixture
 def db_path(tmp_path):
     return tmp_path / "test_tokens.db"
-
-
-@pytest.fixture
-def app_client(db_path):
-    """TestClient with a fresh in-memory DB and no Azure AD configured (dev mode)."""
-    from api.database import init_db
-    init_db(db_path)
-
-    # Override DATABASE_URL to point to temp DB; clear auth env so dev mode activates
-    env = {k: v for k, v in os.environ.items() if k not in ("AZURE_CLIENT_ID", "AZURE_TENANT_ID", "API_KEY")}
-    env["DATABASE_URL"] = str(db_path)
-
-    with patch.dict(os.environ, env, clear=True):
-        from api.main import app
-        with TestClient(app) as client:
-            yield client
 
 
 @pytest.fixture
