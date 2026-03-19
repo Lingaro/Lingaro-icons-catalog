@@ -197,13 +197,20 @@ class TestPATAsApiKey:
         env["AZURE_CLIENT_ID"] = "test-client-id"
         with patch.dict(os.environ, env, clear=True):
             from api.main import app
-            with TestClient(app) as client:
-                resp = client.post(
-                    "/api/tokens/me",
-                    json={"expires_days": 30, "name": "CLI"},
-                    headers={"X-API-Key": token},
-                )
-                assert resp.status_code == 401
+            from api import dependencies
+            # Clear fixture's bearer override so require_bearer_auth runs for real
+            saved = dict(app.dependency_overrides)
+            app.dependency_overrides.clear()
+            try:
+                with TestClient(app) as client:
+                    resp = client.post(
+                        "/api/tokens/me",
+                        json={"expires_days": 30, "name": "CLI"},
+                        headers={"X-API-Key": token},
+                    )
+                    assert resp.status_code == 401
+            finally:
+                app.dependency_overrides.update(saved)
 
     def test_pat_cannot_delete_pat(self, bearer_client, db_path):
         """A PAT cannot be used to call the token revocation endpoint."""
@@ -215,9 +222,16 @@ class TestPATAsApiKey:
         env["AZURE_CLIENT_ID"] = "test-client-id"
         with patch.dict(os.environ, env, clear=True):
             from api.main import app
-            with TestClient(app) as client:
-                resp = client.delete("/api/tokens/me", headers={"X-API-Key": token})
-                assert resp.status_code == 401
+            from api import dependencies
+            # Clear fixture's bearer override so require_bearer_auth runs for real
+            saved = dict(app.dependency_overrides)
+            app.dependency_overrides.clear()
+            try:
+                with TestClient(app) as client:
+                    resp = client.delete("/api/tokens/me", headers={"X-API-Key": token})
+                    assert resp.status_code == 401
+            finally:
+                app.dependency_overrides.update(saved)
 
 
 class TestExpiredPAT:

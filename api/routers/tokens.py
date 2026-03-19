@@ -2,9 +2,9 @@
 
 import uuid
 from datetime import datetime, timezone
-from typing import Literal, Optional
+from typing import Literal
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from ..auth import CurrentUser
@@ -64,13 +64,9 @@ def get_my_token(
 @router.post("/me", response_model=TokenCreated, status_code=201)
 def create_my_token(
     body: TokenCreate,
-    x_api_key: Optional[str] = Header(None),
     user: CurrentUser = Depends(require_bearer_auth),
     db=Depends(get_database),
 ):
-    # PATs must not be used to generate new tokens — require a real Bearer session.
-    if x_api_key:
-        raise HTTPException(status_code=401, detail="Bearer authentication required")
     raw = generate_token()
     expires_at = make_expires_at(body.expires_days)
     created_at = datetime.now(timezone.utc)
@@ -99,13 +95,9 @@ def create_my_token(
 
 @router.delete("/me", status_code=204)
 def delete_my_token(
-    x_api_key: Optional[str] = Header(None),
     user: CurrentUser = Depends(require_bearer_auth),
     db=Depends(get_database),
 ):
-    # PATs must not be used to revoke tokens — require a real Bearer session.
-    if x_api_key:
-        raise HTTPException(status_code=401, detail="Bearer authentication required")
     result = db.execute(
         "DELETE FROM personal_tokens WHERE user_email = ?", (user.email,)
     )
