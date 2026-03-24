@@ -205,13 +205,24 @@ class SearchService:
 
     def _find_cover_icon(self, set_name):
         """Find best cover icon for a collection: explicit override, name match, or first icon."""
+        import logging
+
+        # Check explicit overrides first
         if set_name in self.COVER_OVERRIDES:
             override_id = self.COVER_OVERRIDES[set_name]
             row = self.conn.execute(
-                "SELECT id FROM icons WHERE id = ? AND status = 'ready'", (override_id,)
+                "SELECT id FROM icons WHERE id = ? AND status = 'ready'",
+                (override_id,)
             ).fetchone()
             if row:
                 return row[0]
+            else:
+                # Log warning but continue to fallback logic
+                logging.warning(
+                    f"Cover override for '{set_name}' points to non-existent icon: {override_id}"
+                )
+
+        # Fallback: try name match
         slug = set_name.lower().replace(" ", "").replace("_", "")
         cursor = self.conn.execute(
             "SELECT id, name FROM icons WHERE set_name = ? AND status = 'ready' ORDER BY name",
