@@ -45,7 +45,7 @@ $itemsToInclude = @(
     @{ Path = "powerpoint-addin/dist"; Type = "dir" },
     @{ Path = "index.html";    Type = "file" },
     @{ Path = "requirements.txt"; Type = "file" },
-    @{ Path = "run_api.py";    Type = "file" },
+    @{ Path = "app.py";        Type = "file" },
     @{ Path = "gunicorn.conf.py"; Type = "file" },
     @{ Path = "startup.txt";   Type = "file" }
 )
@@ -110,7 +110,7 @@ az webapp config appsettings set --name $APP --resource-group $RG --settings `
 
 # Set startup command directly (not file reference)
 Write-Host ">> Setting startup command..." -ForegroundColor Yellow
-$startupCmd = "python -m scripts.migrate_to_sqlite 2>/dev/null; gunicorn -c gunicorn.conf.py api.main:app"
+$startupCmd = "rm -f data/catalog.db; python -m scripts.migrate_to_sqlite; gunicorn -c gunicorn.conf.py api.main:app"
 az webapp config set --name $APP --resource-group $RG --startup-file $startupCmd --output none
 
 # Deploy (without --clean to preserve files during build)
