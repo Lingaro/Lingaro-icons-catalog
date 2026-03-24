@@ -30,8 +30,48 @@ def generate_basic_tags(name: str, category: str) -> list:
     return tags[:8]
 
 
+VARIANT_DIRS = ("color", "regular")
+
+
+def _make_icon_entry(icon_file: Path, set_name: str, category: str, icons_dir: Path,
+                     variant: str = "") -> dict:
+    """Create an icon metadata entry from an icon file (SVG or PNG)."""
+    icon_name = icon_file.stem
+    if variant:
+        icon_id = f"{set_name}_{category}_{variant}_{icon_name}".lower()
+    else:
+        icon_id = f"{set_name}_{category}_{icon_name}".lower()
+    icon_id = icon_id.replace(' ', '_').replace('-', '_')
+
+    description = f"{icon_name.replace('_', ' ').replace('-', ' ')} icon"
+    if category:
+        description += f" from {category} category"
+    if variant:
+        description += f" ({variant})"
+
+    tags = generate_basic_tags(icon_name, category)
+    if variant:
+        tags.append(variant)
+
+    return {
+        "id": icon_id,
+        "name": icon_name,
+        "filename": icon_file.name,
+        "path": str(icon_file.relative_to(icons_dir.parent)).replace("\\", "/"),
+        "category": category,
+        "set": set_name,
+        "description": description,
+        "tags": tags,
+        "use_cases": []
+    }
+
+
 def scan_icons(icons_dir: Path) -> tuple:
-    """Scan the icons directory and return icons, categories, and sets."""
+    """Scan the icons directory and return icons, categories, and sets.
+
+    Supports both nested (set/category/*.svg) and flat (set/*.svg) layouts.
+    For flat directories the set name is used as the category.
+    """
     icons = []
     categories = set()
     sets = set()
@@ -43,34 +83,52 @@ def scan_icons(icons_dir: Path) -> tuple:
         set_name = set_dir.name
         sets.add(set_name)
 
+        # Check for icon files directly in the set directory (flat layout)
+        flat_icons = sorted(list(set_dir.glob("*.svg")) + list(set_dir.glob("*.png")))
+        if flat_icons:
+            category = set_name  # use set name as category for flat dirs
+            categories.add(category)
+            for icon_file in flat_icons:
+                icons.append(_make_icon_entry(icon_file, set_name, category, icons_dir))
+
+        # Check for category subdirectories (nested layout)
         for category_dir in sorted(set_dir.iterdir()):
             if not category_dir.is_dir():
+                continue
+            # Skip known non-category dirs (e.g. raw source folders)
+            if category_dir.name in ("svg", "raw"):
+                continue
+            # Variant dirs (color/regular) at set level are handled as
+            # set-level categories with a variant tag
+            if category_dir.name in VARIANT_DIRS:
+                category = set_name
+                categories.add(category)
+                variant = category_dir.name
+                for icon_file in sorted(list(category_dir.glob("*.svg")) + list(category_dir.glob("*.png"))):
+                    icons.append(_make_icon_entry(icon_file, set_name, category, icons_dir, variant=variant))
                 continue
 
             category = category_dir.name
             categories.add(category)
 
-            for svg_file in sorted(category_dir.glob("*.svg")):
-                icon_name = svg_file.stem
-                icon_id = f"{set_name}_{category}_{icon_name}".lower()
-                icon_id = icon_id.replace(' ', '_').replace('-', '_')
-
-                # Generate basic description from name
-                description = f"{icon_name.replace('_', ' ').replace('-', ' ')} icon"
-                if category:
-                    description += f" from {category} category"
-
-                icons.append({
-                    "id": icon_id,
-                    "name": icon_name,
-                    "filename": svg_file.name,
-                    "path": str(svg_file.relative_to(icons_dir.parent)).replace("\\", "/"),
-                    "category": category,
-                    "set": set_name,
-                    "description": description,
-                    "tags": generate_basic_tags(icon_name, category),
-                    "use_cases": []
-                })
+            # Check for variant subdirectories inside category (e.g. fabric items/color/)
+            has_variant_subdirs = any(
+                (category_dir / v).is_dir() for v in VARIANT_DIRS
+            )
+            if has_variant_subdirs:
+                for variant_dir in sorted(category_dir.iterdir()):
+                    if not variant_dir.is_dir():
+                        continue
+                    if variant_dir.name in VARIANT_DIRS:
+                        variant = variant_dir.name
+                        for icon_file in sorted(list(variant_dir.glob("*.svg")) + list(variant_dir.glob("*.png"))):
+                            icons.append(_make_icon_entry(icon_file, set_name, category, icons_dir, variant=variant))
+                # Also pick up any icons directly in the category dir
+                for icon_file in sorted(list(category_dir.glob("*.svg")) + list(category_dir.glob("*.png"))):
+                    icons.append(_make_icon_entry(icon_file, set_name, category, icons_dir))
+            else:
+                for icon_file in sorted(list(category_dir.glob("*.svg")) + list(category_dir.glob("*.png"))):
+                    icons.append(_make_icon_entry(icon_file, set_name, category, icons_dir))
 
     return icons, sorted(list(categories)), sorted(list(sets))
 
@@ -100,7 +158,7 @@ def main():
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         json.dump(output_data, f, indent=2, ensure_ascii=False)
 
-    print(f"\n✓ Saved {len(icons)} icons to {OUTPUT_FILE}")
+    print(f"\n[OK] Saved {len(icons)} icons to {OUTPUT_FILE}")
     print("\nTo add AI-powered annotations, run:")
     print("  python scripts/annotate.py")
 
