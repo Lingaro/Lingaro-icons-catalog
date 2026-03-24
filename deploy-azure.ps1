@@ -86,11 +86,11 @@ if (-not $SkipZip) {
     $includeItems = @(
         "api",
         "assets",
-        "data",
+        # "data",  # Don't deploy database - will be rebuilt from icons.json on startup
         "icons",
         "scripts",
         "requirements.txt",
-        "run_api.py",
+        "app.py",
         "startup.txt"
     )
 
@@ -120,6 +120,13 @@ if (-not $SkipZip) {
 
     # Remove __pycache__ folders
     Get-ChildItem $stagingDir -Recurse -Directory -Filter "__pycache__" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+
+    # Create empty data directory (database will be built from icons.json on startup)
+    $dataDir = Join-Path $stagingDir "data"
+    if (-not (Test-Path $dataDir)) {
+        New-Item -ItemType Directory -Path $dataDir | Out-Null
+        Write-Success "Created empty data directory"
+    }
 
     # Create ZIP
     if (Test-Path $ZipFile) {
