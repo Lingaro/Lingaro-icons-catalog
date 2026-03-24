@@ -21,20 +21,12 @@ def generate_icon_id(set_name: str, category: str, filename: str) -> str:
     Returns:
         Generated icon ID (normalized)
     """
-    import re
-
     # Remove extension and normalize
-    name = Path(filename).stem.replace(" ", "_").replace("-", "_").lower()
+    name = Path(filename).stem.replace(" ", "_").replace("&", "_&_").replace("-", "_").lower()
 
-    # Normalize set_name and category: replace spaces/hyphens with underscores,
-    # then collapse multiple underscores into single underscores
-    set_slug = set_name.replace(" ", "_").replace("-", "_").lower()
-    set_slug = re.sub(r"_+", "_", set_slug)  # Collapse multiple underscores
-
-    cat_slug = category.replace(" ", "_").replace("-", "_").lower()
-    cat_slug = re.sub(r"_+", "_", cat_slug)  # Collapse multiple underscores
-
-    name = re.sub(r"_+", "_", name)  # Collapse multiple underscores
+    # Normalize set_name and category: spaces→_, &→_&_, hyphens→_, lowercase
+    set_slug = set_name.replace(" ", "_").replace("&", "_&_").replace("-", "_").lower()
+    cat_slug = category.replace(" ", "_").replace("&", "_&_").replace("-", "_").lower()
 
     return f"{set_slug}_{cat_slug}_{name}"
 
