@@ -1,12 +1,15 @@
 """Search service backed by SQLite (text search) and sqlite-vec (semantic search)."""
 
 import json
+import logging
 import os
 import sqlite3
 from typing import Optional
 
 import numpy as np
 from openai import OpenAI
+
+logger = logging.getLogger(__name__)
 
 EMBEDDING_MODEL = "text-embedding-3-small"
 EMBEDDING_DIMENSIONS = 256
@@ -205,8 +208,6 @@ class SearchService:
 
     def _find_cover_icon(self, set_name):
         """Find best cover icon for a collection: explicit override, name match, or first icon."""
-        import logging
-
         # Check explicit overrides first
         if set_name in self.COVER_OVERRIDES:
             override_id = self.COVER_OVERRIDES[set_name]
@@ -218,7 +219,7 @@ class SearchService:
                 return row[0]
             else:
                 # Log warning but continue to fallback logic
-                logging.warning(
+                logger.warning(
                     f"Cover override for '{set_name}' points to non-existent icon: {override_id}"
                 )
 
