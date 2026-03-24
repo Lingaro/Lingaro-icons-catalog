@@ -158,7 +158,7 @@ async def delete_icon_endpoint(
 
 @router.get("/{icon_id}/file")
 async def get_icon_file(
-    icon_id: str, user=Depends(require_auth), db=Depends(get_database), storage=Depends(get_storage_backend),
+    icon_id: str, db=Depends(get_database), storage=Depends(get_storage_backend),
 ):
     icon = get_icon(db, icon_id)
     if not icon:
@@ -170,5 +170,5 @@ async def get_icon_file(
     content_type = "image/svg+xml" if icon["filename"].endswith(".svg") else "image/png"
     return Response(
         content=data, media_type=content_type,
-        headers={"Cache-Control": "no-cache, must-revalidate"},
+        headers={"Cache-Control": "public, max-age=3600"},  # Cache for 1 hour
     )
