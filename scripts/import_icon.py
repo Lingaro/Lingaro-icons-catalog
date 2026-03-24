@@ -22,11 +22,11 @@ def generate_icon_id(set_name: str, category: str, filename: str) -> str:
         Generated icon ID (normalized)
     """
     # Remove extension and normalize
-    name = Path(filename).stem.replace(" ", "_").replace("&", "_&_").replace("-", "_").lower()
+    name = Path(filename).stem.replace(" ", "_").replace("-", "_").lower()
 
-    # Normalize set_name and category: spaces→_, &→_&_, hyphens→_, lowercase
-    set_slug = set_name.replace(" ", "_").replace("&", "_&_").replace("-", "_").lower()
-    cat_slug = category.replace(" ", "_").replace("&", "_&_").replace("-", "_").lower()
+    # Normalize set_name and category: spaces→_, hyphens→_, lowercase
+    set_slug = set_name.replace(" ", "_").replace("-", "_").lower()
+    cat_slug = category.replace(" ", "_").replace("-", "_").lower()
 
     return f"{set_slug}_{cat_slug}_{name}"
 
