@@ -170,3 +170,57 @@ class SearchService:
     def count_icons(self):
         cursor = self.conn.execute("SELECT COUNT(*) FROM icons WHERE status = 'ready'")
         return cursor.fetchone()[0]
+
+    def get_collections(self):
+        cursor = self.conn.execute("""
+            SELECT set_name, COUNT(*) as icon_count,
+                   GROUP_CONCAT(DISTINCT category) as categories
+            FROM icons WHERE status = 'ready'
+            GROUP BY set_name ORDER BY icon_count DESC
+        """)
+        results = []
+        for row in cursor.fetchall():
+            name = row[0]
+            cover = self._find_cover_icon(name)
+            results.append({
+                "name": name,
+                "icon_count": row[1],
+                "categories": row[2].split(",") if row[2] else [],
+                "cover_icon_id": cover,
+            })
+        return results
+
+    # Explicit cover icon overrides per collection (icon ID)
+    COVER_OVERRIDES = {
+        "databricks": "databricks_databricks_11_databricks",
+        "Apache": "apache_apache_apache_logo",
+        "Data & Analytics": "lingaro_set4_data_analysis_charts_chart_2",
+        "ML & AI": "lingaro_set4_data_analysis_charts_ai_2",
+        "DevOps & Infra": "devops_&_infra_devops_&_infra_devops",
+        "Microsoft Fabric": "microsoft_fabric_services_fabric_20_color",
+        "Azure": "azure_other_azure_icon",
+        "Google Cloud": "google_cloud_google_cloud_google_cloud_logo",
+        "lingaro_set4": "lingaro_set4_branding_lingaro_logo_small_transparent",
+    }
+
+    def _find_cover_icon(self, set_name):
+        """Find best cover icon for a collection: explicit override, name match, or first icon."""
+        if set_name in self.COVER_OVERRIDES:
+            override_id = self.COVER_OVERRIDES[set_name]
+            row = self.conn.execute(
+                "SELECT id FROM icons WHERE id = ? AND status = 'ready'", (override_id,)
+            ).fetchone()
+            if row:
+                return row[0]
+        slug = set_name.lower().replace(" ", "").replace("_", "")
+        cursor = self.conn.execute(
+            "SELECT id, name FROM icons WHERE set_name = ? AND status = 'ready' ORDER BY name",
+            (set_name,)
+        )
+        first_id = None
+        for row in cursor.fetchall():
+            if first_id is None:
+                first_id = row[0]
+            if row[1].lower().replace(" ", "").replace("_", "") == slug:
+                return row[0]
+        return first_id
