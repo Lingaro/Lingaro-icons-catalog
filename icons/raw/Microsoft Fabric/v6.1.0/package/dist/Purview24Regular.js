@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgPurview24Regular = function SvgPurview24Regular(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    d: "M8.306 3.82c1.638-2.842 5.736-2.842 7.375 0l.001.002 6.068 10.615q.179.247.343.502l.01.014.556.966c1.629 2.823 0 6.392-3.687 6.392H5.014c-3.687 0-5.326-3.552-3.687-6.392zm3.73 14.956q.048-.032.106-.077a8 8 0 0 0 .748-.673c.57-.57 1.187-1.293 1.598-1.91.234-.35.742-1.336 1.134-2.368a9 9 0 0 0 .428-1.42q.058-.308.055-.502a1 1 0 0 0-.013-.153l-.018-.013-.016-.011a10.63 10.63 0 0 0-8.033-.046l-.023.01-.084.035-.001.005-.002.035a10.6 10.6 0 0 0 1.927 4.839 10.6 10.6 0 0 0 2.194 2.249m6.25-7.567a12 12 0 0 0-1.647-.844v.002a12.05 12.05 0 0 0-8.813-.194c.025-2.073.687-3.898 1.698-5.65 1.097-1.903 3.84-1.904 4.938-.002v.001zm-.816 1.152a6 6 0 0 1-.04.232c-.283 1.482-.94 3.055-1.772 4.304-.474.711-1.156 1.507-1.774 2.125-.206.205-.41.397-.604.563 1.785.993 3.077 1.37 5.69 1.37 2.289 0 3.58-2.412 2.471-4.333-.27-.47-.528-.944-.846-1.383a10.6 10.6 0 0 0-3.125-2.878M6.447 11.136a12 12 0 0 1-.021-1.243l-3.881 6.729c-1.099 1.904.275 4.283 2.47 4.283h7.744a12 12 0 0 1-4.057-3.555 12 12 0 0 1-2.255-6.214",
+    clipRule: "evenodd"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgPurview24Regular);
+
+export { ForwardRef as default };

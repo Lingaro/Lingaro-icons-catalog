@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgHomeWaves16Regular = function SvgHomeWaves16Regular(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M8.038 1.303a1.5 1.5 0 0 0-2.076 0l-4.5 4.317A1.5 1.5 0 0 0 1 6.702V12.5A1.5 1.5 0 0 0 2.5 14h1.632c.235-.522.76-.886 1.368-.886A.97.97 0 0 0 5.99 13H2.5a.5.5 0 0 1-.5-.5V6.702a.5.5 0 0 1 .154-.36l4.5-4.317a.5.5 0 0 1 .692 0l4.5 4.317a.5.5 0 0 1 .154.36V7.5a1.5 1.5 0 0 1 .999-.386H13v-.412a1.5 1.5 0 0 0-.462-1.082zm.944 11.996c.358.44.854.815 1.518.815s1.161-.375 1.518-.815a3.6 3.6 0 0 0 .509-.849l.004-.011v-.001a.499.499 0 0 1 .953.055v-.001l.002.009.002.008.003.008.009.031a2.8 2.8 0 0 0 .398.767c.307.409.796.8 1.6.8a.5.5 0 0 1 0 1c-1.196 0-1.957-.609-2.4-1.2a3 3 0 0 1-.141-.202 5 5 0 0 1-.165.217c-.455.56-1.208 1.185-2.294 1.185s-1.839-.625-2.294-1.185a5 5 0 0 1-.165-.217q-.065.1-.141.202c-.443.591-1.204 1.2-2.4 1.2a.5.5 0 0 1 0-1c.804 0 1.293-.391 1.6-.8a2.8 2.8 0 0 0 .415-.815l.002-.008a.499.499 0 0 1 .953-.054l.004.011.021.05a3.7 3.7 0 0 0 .489.8"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M10.5 10.114c-.664 0-1.16-.375-1.518-.815a3.6 3.6 0 0 1-.488-.799l-.012-.027-.01-.024-.004-.011a.5.5 0 0 0-.953.054l-.002.008-.014.047a2.8 2.8 0 0 1-.399.767c-.307.409-.796.8-1.6.8a.5.5 0 0 0 0 1c1.196 0 1.957-.609 2.4-1.2q.077-.101.14-.202.077.108.165.217c.455.56 1.208 1.185 2.294 1.185s1.839-.625 2.294-1.185q.088-.11.165-.217.065.1.141.202c.443.591 1.204 1.2 2.4 1.2a.5.5 0 0 0 0-1c-.804 0-1.293-.391-1.6-.8a2.8 2.8 0 0 1-.407-.798l-.005-.016-.003-.008v.001a.5.5 0 0 0-.953-.055v.001l-.004.011-.021.05a3.6 3.6 0 0 1-.488.799c-.357.44-.854.815-1.518.815"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgHomeWaves16Regular);
+
+export { ForwardRef as default };

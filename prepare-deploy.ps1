@@ -25,7 +25,7 @@ $includeItems = @(
     "assets",
     "icons",
     "requirements.txt",
-    "run_api.py"
+    "app.py"
 )
 
 # Create staging folder

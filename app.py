@@ -3,10 +3,10 @@
 Run the Lingaro Icons Catalog API server.
 
 Usage:
-    python run_api.py                    # Run on default port 8000 with auto-reload
-    python run_api.py --port 3000        # Run on custom port
-    python run_api.py --no-reload        # Disable auto-reload
-    python run_api.py --workers 4        # Production: multiple workers
+    python app.py                    # Run on default port 8000 with auto-reload
+    python app.py --port 3000        # Run on custom port
+    python app.py --no-reload        # Disable auto-reload
+    python app.py --workers 4        # Production: multiple workers
 """
 
 import argparse

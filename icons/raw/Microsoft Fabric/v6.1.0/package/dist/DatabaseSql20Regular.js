@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgDatabaseSql20Regular = function SvgDatabaseSql20Regular(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M4 5.002c0-1.007.875-1.755 1.9-2.223a10.2 10.2 0 0 1 4.1-.777 10.2 10.2 0 0 1 4.1.777c1.025.468 1.9 1.216 1.9 2.223v7h-1v-5.3q-.421.309-.9.523c-1.298.54-2.694.804-4.1.777a10.2 10.2 0 0 1-4.1-.775 5 5 0 0 1-.9-.525v8.3c0 .374.356.875 1.318 1.313q.334.15.682.26v1.043a7.5 7.5 0 0 1-1.1-.393C4.875 16.757 4 16.009 4 15.002zm1 0c0 .374.356.875 1.314 1.313h.004A9.2 9.2 0 0 0 10 7.002a9.2 9.2 0 0 0 3.682-.687C14.644 5.877 15 5.375 15 5.002c0-.374-.356-.875-1.318-1.313A9.2 9.2 0 0 0 10 3.002a9.2 9.2 0 0 0-3.682.687C5.356 4.127 5 4.628 5 5.002"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M11.206 13.437A2.14 2.14 0 0 0 9.696 13a1.583 1.583 0 0 0-1.695 1.468L8 14.485v.017c0 .578.364.936.693 1.136.306.186.657.285.848.339l.085.024c.201.056.388.108.54.201.14.085.192.166.192.3 0 .255-.084.341-.152.387-.1.069-.272.113-.506.113h-.021l-.022.002a1.17 1.17 0 0 1-.84-.26.5.5 0 0 0-.633.774c.431.353.982.526 1.537.484.32-.002.717-.06 1.05-.287.371-.254.587-.668.587-1.213 0-.582-.33-.945-.671-1.153-.28-.171-.606-.26-.792-.312l-.06-.016c-.206-.059-.44-.126-.622-.237-.164-.1-.208-.183-.213-.266a.58.58 0 0 1 .644-.519l.058.007.058-.007a1.14 1.14 0 0 1 .834.229.5.5 0 1 0 .612-.791M14 13.002a2 2 0 0 0-2 2v1a2 2 0 0 0 3.25 1.562l.45.338a.5.5 0 0 0 .6-.8l-.45-.338a2 2 0 0 0 .15-.762v-1a2 2 0 0 0-2-2m.3 2.6a.5.5 0 0 0-.6.8l.693.52a1 1 0 0 1-1.393-.92v-1a1 1 0 0 1 2 0v1q0 .06-.007.12zm3.2-2.6a.5.5 0 0 1 .5.5v3.5h1.5a.5.5 0 1 1 0 1h-2a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgDatabaseSql20Regular);
+
+export { ForwardRef as default };

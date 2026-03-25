@@ -1,0 +1,17 @@
+setup.py
+cli_anything/lingaro_catalog/__init__.py
+cli_anything/lingaro_catalog/lingaro_catalog_cli.py
+cli_anything/lingaro_catalog/core/__init__.py
+cli_anything/lingaro_catalog/core/client.py
+cli_anything/lingaro_catalog/core/config.py
+cli_anything/lingaro_catalog/tests/__init__.py
+cli_anything/lingaro_catalog/tests/test_core.py
+cli_anything/lingaro_catalog/tests/test_full_e2e.py
+cli_anything/lingaro_catalog/utils/__init__.py
+cli_anything/lingaro_catalog/utils/output.py
+cli_anything_lingaro_catalog.egg-info/PKG-INFO
+cli_anything_lingaro_catalog.egg-info/SOURCES.txt
+cli_anything_lingaro_catalog.egg-info/dependency_links.txt
+cli_anything_lingaro_catalog.egg-info/entry_points.txt
+cli_anything_lingaro_catalog.egg-info/requires.txt
+cli_anything_lingaro_catalog.egg-info/top_level.txt

@@ -1,0 +1,44 @@
+2026-03-08T10:59:03  Fetching changes.
+2026-03-08T10:59:03    Starting  LocalZipHandler
+2026-03-08T10:59:03    Cleaning up temp folders from previous zip deployments and extracting pushed zip file /tmp/zipdeploy/ea092403-8fac-408e-8612-e64acfadead6.zip (0.74 MB) to /tmp/zipdeploy/extracted
+2026-03-08T10:59:09  Updating submodules.
+2026-03-08T10:59:10  Preparing deployment for commit id '48352764-1'.
+2026-03-08T10:59:11  PreDeployment: context.CleanOutputPath False
+2026-03-08T10:59:11  PreDeployment: context.OutputPath /home/site/wwwroot
+2026-03-08T10:59:12  Repository path is /tmp/zipdeploy/extracted
+2026-03-08T10:59:12  Running oryx build...
+2026-03-08T10:59:12    Command: oryx build /tmp/zipdeploy/extracted -o /home/site/wwwroot --platform python --platform-version 3.11 -p virtualenv_name=antenv --log-file /tmp/build-debug.log  -i /tmp/8de7d01ba5934b7 --compress-destination-dir | tee /tmp/oryx-build.log
+2026-03-08T10:59:19    Operation performed by Microsoft Oryx, https://github.com/Microsoft/Oryx
+2026-03-08T10:59:19    You can report issues at https://github.com/Microsoft/Oryx/issues
+2026-03-08T10:59:19    
+2026-03-08T10:59:19    Oryx Version: 0.2.20260204.1+0fdbe200b286be083841ff7fa201c6c2316dc6b9, Commit: 0fdbe200b286be083841ff7fa201c6c2316dc6b9, ReleaseTagName: 20260204.1
+2026-03-08T10:59:19    
+2026-03-08T10:59:19    Build Operation ID: 18e54051e9253f7c
+2026-03-08T10:59:20    Repository Commit : 48352764-14cf-41d4-bc59-0bcac65c8ca5
+2026-03-08T10:59:20    OS Type           : bullseye
+2026-03-08T10:59:20    Image Type        : githubactions
+2026-03-08T10:59:20    
+2026-03-08T10:59:20    Primary SDK Storage URL: https://oryx-cdn.microsoft.io
+2026-03-08T10:59:20    Backup SDK Storage URL: 
+2026-03-08T10:59:20    Detecting platforms...
+2026-03-08T10:59:20    External SDK provider is enabled.
+2026-03-08T10:59:21    Requesting metadata for platform python from external SDK provider
+2026-03-08T10:59:25    Requesting metadata for platform python from external SDK provider
+2026-03-08T10:59:25    Detected following platforms:
+2026-03-08T10:59:26      python: 3.11.14
+2026-03-08T10:59:27    
+2026-03-08T10:59:27    Using intermediate directory '/tmp/8de7d01ba5934b7'.
+2026-03-08T10:59:27    
+2026-03-08T10:59:27    Copying files to the intermediate directory...
+2026-03-08T10:59:28    Copying files to intermediate directory done in 1 sec(s).
+2026-03-08T10:59:28    
+2026-03-08T10:59:28    Source directory     : /tmp/8de7d01ba5934b7
+2026-03-08T10:59:28    Destination directory: /home/site/wwwroot
+2026-03-08T10:59:28    
+2026-03-08T10:59:29    Running build script snippets...
+2026-03-08T10:59:30    Python Version: /tmp/oryx/platforms/python/3.11.14/bin/python3.11
+2026-03-08T10:59:30    Creating directory for command manifest file if it does not exist
+2026-03-08T10:59:30    Removing existing manifest file
+2026-03-08T10:59:30    Python Virtual Environment: antenv
+2026-03-08T10:59:30    Creating virtual environment...
+2026-03-08T10:59:30    Executing: /tmp/oryx/platforms/python/3.11.14/bin/python3.11 -m venv antenv --copies --system-site-packages

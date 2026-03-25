@@ -1,6 +1,6 @@
 import {
   IconsClient
-} from "./chunk-QEVIUQB3.mjs";
+} from "./chunk-2TBLHY2V.mjs";
 export {
   IconsClient
 };

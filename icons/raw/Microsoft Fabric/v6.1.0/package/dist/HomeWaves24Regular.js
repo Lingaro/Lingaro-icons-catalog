@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgHomeWaves24Regular = function SvgHomeWaves24Regular(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M9.537 2.532a2.25 2.25 0 0 1 2.903-.002l6.76 5.699c.507.428.8 1.057.8 1.72v2.774a2.27 2.27 0 0 0-1.5-1.165V9.949a.75.75 0 0 0-.267-.573l-6.76-5.7a.75.75 0 0 0-.968.001l-6.74 5.698a.75.75 0 0 0-.265.573v8.8c0 .138.112.25.25.25h5.142a1 1 0 0 1-.142 0 2.25 2.25 0 0 0-2.121 1.5H3.75A1.75 1.75 0 0 1 2 18.748v-8.8c0-.662.292-1.29.797-1.718zM15.1 18.998h-.187z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M16.743 14.548c.1-.134.186-.269.257-.395v.001a4 4 0 0 0 .279-.613l.003-.011a.75.75 0 0 1 1.441.02l.003.009.018.054a3.3 3.3 0 0 0 .504.922c.384.49.996.963 2.002.963a.75.75 0 0 1 0 1.5c-1.574 0-2.587-.777-3.183-1.537L18 15.372l-.056.076c-.473.63-1.238 1.32-2.358 1.503a3.6 3.6 0 0 1-1.191-.003c-1.11-.188-1.868-.873-2.339-1.5l-.055-.076-.068.089c-.596.76-1.61 1.537-3.183 1.537a.75.75 0 1 1 0-1.5c1.006 0 1.618-.473 2.002-.963a3.3 3.3 0 0 0 .505-.922l.017-.054.003-.009a.75.75 0 0 1 1.44-.02l.004.011.02.058a4 4 0 0 0 .259.556v-.002c.071.126.157.261.257.395.338.45.802.84 1.453.93a2.1 2.1 0 0 0 .623-.006c.628-.101 1.08-.484 1.41-.924m0 5c.1-.134.186-.269.257-.395v.001a4 4 0 0 0 .279-.613l.003-.011a.75.75 0 0 1 1.441.02l.003.009.018.054a3.3 3.3 0 0 0 .504.922c.384.49.996.963 2.002.963a.75.75 0 0 1 0 1.5c-1.574 0-2.587-.777-3.183-1.537L18 20.372l-.056.076c-.473.63-1.238 1.32-2.358 1.503a3.6 3.6 0 0 1-1.191-.003c-1.11-.188-1.868-.873-2.339-1.5l-.055-.076-.068.089c-.596.76-1.61 1.537-3.183 1.537a.75.75 0 1 1 0-1.5c1.006 0 1.618-.473 2.002-.963a3.3 3.3 0 0 0 .505-.922l.017-.054.003-.009a.75.75 0 0 1 1.44-.02l.004.011.02.058a4 4 0 0 0 .259.556v-.002c.071.126.157.261.257.395.338.45.802.84 1.453.93a2.1 2.1 0 0 0 .623-.006c.628-.101 1.08-.484 1.41-.924"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgHomeWaves24Regular);
+
+export { ForwardRef as default };

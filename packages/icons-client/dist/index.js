@@ -75,6 +75,11 @@ var IconsClient = class {
     if (!res.ok) throw new Error(`Categories failed: ${res.status}`);
     return res.json();
   }
+  async getCollections() {
+    const res = await fetch(`${this.baseUrl}/collections`, { headers: this.headers() });
+    if (!res.ok) throw new Error(`Collections failed: ${res.status}`);
+    return res.json();
+  }
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

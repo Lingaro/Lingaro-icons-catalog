@@ -1,0 +1,104 @@
+<h2>Insert Interaction</h2>
+<p class="subtitle">Two actions per icon: preview (hover/click) and insert (button)</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="width:300px;margin:0 auto;background:#fff;border:1px solid #d1d1d1;border-radius:8px;overflow:hidden;font-family:'Segoe UI',sans-serif;font-size:12px;">
+        <!-- Header -->
+        <div style="background:#783cbe;color:white;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="white"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>
+          <span style="font-weight:600;font-size:13px;">Lingaro Icons</span>
+        </div>
+        <!-- Search -->
+        <div style="padding:8px 12px;">
+          <div style="background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;padding:6px 10px;display:flex;align-items:center;gap:6px;color:#333;">
+            <span>🔍</span> <span>cloud database</span>
+          </div>
+        </div>
+        <!-- Icon Grid - one hovered with overlay -->
+        <div style="padding:4px 12px 8px;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <div style="aspect-ratio:1;background:#f9f5ff;border:2px solid #783cbe;border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><ellipse cx="14" cy="18" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/><ellipse cx="14" cy="14" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/><ellipse cx="14" cy="10" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/></svg>
+              <!-- Hover overlay with + button -->
+              <div style="position:absolute;inset:0;background:rgba(120,60,190,0.08);border-radius:5px;display:flex;align-items:flex-end;justify-content:flex-end;padding:2px;">
+                <div style="background:#783cbe;color:white;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;">+</div>
+              </div>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><path d="M6 8h16v12H6z" fill="none" stroke="#783cbe" stroke-width="1.5"/><circle cx="20" cy="6" r="4" fill="none" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="6" y="6" width="16" height="16" rx="2" fill="none" stroke="#783cbe" stroke-width="1.5"/><line x1="6" y1="14" x2="22" y2="14" stroke="#783cbe" stroke-width="1"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="#783cbe" stroke-width="1.5"/><path d="M9 14h10M14 9v10" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+          </div>
+        </div>
+        <!-- Preview panel below grid -->
+        <div style="margin:0 12px 12px;background:#f9f5ff;border:1px solid #e8daf5;border-radius:8px;padding:10px;display:flex;gap:10px;align-items:center;">
+          <div style="background:white;border:1px solid #e8daf5;border-radius:6px;padding:8px;flex-shrink:0;">
+            <svg width="40" height="40" viewBox="0 0 28 28"><ellipse cx="14" cy="18" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/><ellipse cx="14" cy="14" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/><ellipse cx="14" cy="10" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/></svg>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:600;color:#333;font-size:11px;">Cloud Database</div>
+            <div style="color:#888;font-size:9px;">Data Analysis · SVG</div>
+            <div style="display:flex;gap:3px;margin-top:3px;">
+              <span style="background:#e8daf5;color:#783cbe;padding:1px 5px;border-radius:6px;font-size:8px;">database</span>
+              <span style="background:#e8daf5;color:#783cbe;padding:1px 5px;border-radius:6px;font-size:8px;">cloud</span>
+            </div>
+          </div>
+          <div style="background:#783cbe;color:white;padding:6px 10px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap;">Insert</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Inline Preview Bar</h3>
+      <p>Click an icon to preview it in a bar below the grid. Shows name, tags, format. "Insert" button to confirm. Hover shows a <strong>+</strong> badge. Grid stays visible — easy to compare icons.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="width:300px;margin:0 auto;background:#fff;border:1px solid #d1d1d1;border-radius:8px;overflow:hidden;font-family:'Segoe UI',sans-serif;font-size:12px;">
+        <!-- Header -->
+        <div style="background:#783cbe;color:white;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="white"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>
+          <span style="font-weight:600;font-size:13px;">Lingaro Icons</span>
+        </div>
+        <!-- Back button -->
+        <div style="padding:8px 12px 4px;">
+          <span style="color:#783cbe;font-size:11px;cursor:pointer;">← Back to results</span>
+        </div>
+        <!-- Full detail view -->
+        <div style="padding:8px 12px;text-align:center;">
+          <div style="background:#f9f5ff;border:1px solid #e8daf5;border-radius:8px;padding:24px;display:inline-block;">
+            <svg width="72" height="72" viewBox="0 0 28 28"><ellipse cx="14" cy="18" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/><ellipse cx="14" cy="14" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/><ellipse cx="14" cy="10" rx="9" ry="4" fill="none" stroke="#783cbe" stroke-width="1.5"/></svg>
+          </div>
+          <div style="font-weight:600;margin-top:10px;color:#333;font-size:14px;">Cloud Database</div>
+          <div style="color:#888;font-size:10px;margin-top:2px;">Data Analysis Charts · Lingaro Set</div>
+          <div style="color:#666;font-size:10px;margin-top:6px;padding:0 12px;line-height:1.4;">Cloud-based database icon for data storage and management diagrams</div>
+          <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:8px;">
+            <span style="background:#f0e6ff;color:#783cbe;padding:2px 8px;border-radius:8px;font-size:9px;">database</span>
+            <span style="background:#f0e6ff;color:#783cbe;padding:2px 8px;border-radius:8px;font-size:9px;">cloud</span>
+            <span style="background:#f0e6ff;color:#783cbe;padding:2px 8px;border-radius:8px;font-size:9px;">storage</span>
+            <span style="background:#f0e6ff;color:#783cbe;padding:2px 8px;border-radius:8px;font-size:9px;">data</span>
+          </div>
+          <div style="color:#999;font-size:9px;margin-top:8px;">Format: SVG · Size: 1 inch</div>
+        </div>
+        <!-- Insert button -->
+        <div style="padding:12px;">
+          <div style="background:#783cbe;color:white;text-align:center;padding:10px;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer;">
+            Insert into Slide
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Full Detail Page</h3>
+      <p>Click navigates to a full detail view with large preview, description, all tags, and format info. "Back" to return to grid. More info but loses grid context.</p>
+    </div>
+  </div>
+</div>

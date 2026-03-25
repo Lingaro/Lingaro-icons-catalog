@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection Cover Icons Proposal</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #1a1a1a;
+      font-size: 32px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    .section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .section h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge.current {
+      background: #ffc107;
+      color: #000;
+    }
+    .badge.proposed {
+      background: #4caf50;
+      color: white;
+    }
+    .collection-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 2px solid #e0e0e0;
+      transition: all 0.2s;
+    }
+    .collection-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+    .collection-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+    }
+    .icon-preview {
+      width: 80px;
+      height: 80px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      border: 1px solid #e0e0e0;
+    }
+    .icon-preview svg,
+    .icon-preview img {
+      max-width: 60px;
+      max-height: 60px;
+    }
+    .icon-name {
+      font-size: 13px;
+      color: #666;
+      font-family: 'Courier New', monospace;
+    }
+    .status {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    .status.exists {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .status.needs-selection {
+      background: #fff3e0;
+      color: #e65100;
+    }
+    .status.needs-import {
+      background: #e3f2fd;
+      color: #0277bd;
+    }
+    .status.random {
+      background: #ffebee;
+      color: #c62828;
+    }
+    .legend {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+    .legend h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #333;
+    }
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #666;
+    }
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 16px;
+      border-radius: 4px;
+      margin-top: 30px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .note strong {
+      color: #856404;
+    }
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Collection Cover Icons - Fixed Proposal</h1>
+    <p class="subtitle">
+      Replacing random icon selection with fixed, recognizable cover icons for each collection.
+      This ensures consistent branding and makes collections instantly recognizable.
+    </p>
+
+    <div class="comparison">
+      <div class="section">
+        <h2>
+          <span class="badge current">Current</span>
+          Random Selection
+        </h2>
+        <div class="collection-card">
+          <div class="collection-name">Example: databricks</div>
+          <div class="icon-preview">
+            <svg width="60" height="60" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" fill="#ccc"/>
+              <text x="12" y="16" text-anchor="middle" fill="#666" font-size="12">?</text>
+            </svg>
+          </div>
+          <div class="icon-name">Random icon picked on each load</div>
+          <span class="status random">Inconsistent</span>
+        </div>
+        <p style="color: #666; font-size: 14px; margin-top: 16px;">
+          Currently uses fallback logic: finds icon whose name matches collection name, or picks first alphabetically.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>
+          <span class="badge proposed">Proposed</span>
+          Fixed Icons
+        </h2>
+        <div class="collection-card">
+          <div class="collection-name">databricks</div>
+          <div class="icon-preview">
+            <span style="font-size: 24px; color: #e8590c;">🧱</span>
+          </div>
+          <div class="icon-name">databricks_databricks_11_databricks</div>
+          <span class="status exists">✓ Ready</span>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-bottom: 20px; font-size: 24px;">Proposed Cover Icons by Collection</h2>
+
+    <div id="proposals-grid"></div>
+
+    <div class="legend">
+      <h3>Status Legend</h3>
+      <div class="legend-items">
+        <div class="legend-item">
+          <span class="status exists">✓ Ready</span>
+          <span>Icon exists in database, ready to use</span>
+        </div>
+        <div class="legend-item">
+          <span class="status needs-selection">⚠ Needs Selection</span>
+          <span>Multiple options available, need your choice</span>
+        </div>
+        <div class="legend-item">
+          <span class="status needs-import">+ Import</span>
+          <span>File exists, needs to be added to database</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>🔍 Need Your Decision:</strong><br>
+      • <strong>Microsoft Fabric, Azure, Google Cloud</strong> - These collections have icons but no obvious logo icon. Should we download official logos from the web?<br>
+      • <strong>ML & AI</strong> - OpenAI logo or Anthropic logo? (Or use AI icon from lingaro_set4?)<br>
+      • <strong>DevOps & Infra</strong> - GitHub, Docker, or Kubernetes?
+    </div>
+  </div>
+
+  <script>
+    const proposals = [
+      {
+        name: 'databricks',
+        icon: '🧱',
+        iconId: 'databricks_databricks_11_databricks',
+        iconName: '11_Databricks',
+        status: 'exists',
+        description: 'Official Databricks logo'
+      },
+      {
+        name: 'Apache',
+        icon: '⚡',
+        iconId: 'apache_apache_apachespark',
+        iconName: 'apachespark',
+        status: 'exists',
+        description: 'Apache Spark logo'
+      },
+      {
+        name: 'Data & Analytics',
+        icon: '📊',
+        iconId: 'data_&_analytics_data_&_analytics__cover_da',
+        iconName: '_cover_da',
+        status: 'exists',
+        description: 'Custom cover icon (already exists!)'
+      },
+      {
+        name: 'lingaro_set4',
+        icon: '🏢',
+        iconId: 'lingaro-logo_small_transparent',
+        iconName: 'Lingaro Logo',
+        status: 'needs-import',
+        description: 'Import from assets/branding/lingaro-logo_small_transparent.png'
+      },
+      {
+        name: 'ML & AI',
+        icon: '🤖',
+        iconId: 'ml_&_ai_ml_&_ai_openai',
+        iconName: 'openai',
+        status: 'needs-selection',
+        description: 'Options: OpenAI, Anthropic, or AI icon from lingaro_set4?',
+        options: [
+          'ml_&_ai_ml_&_ai_openai (OpenAI)',
+          'ml_&_ai_ml_&_ai_anthropic (Anthropic)',
+          'lingaro_set4_data_analysis_charts_ai (AI icon from Lingaro set)'
+        ]
+      },
+      {
+        name: 'DevOps & Infra',
+        icon: '⚙️',
+        iconId: 'devops_&_infra_devops_&_infra_github',
+        iconName: 'github',
+        status: 'needs-selection',
+        description: 'Options: GitHub, Docker, or Kubernetes?',
+        options: [
+          'devops_&_infra_devops_&_infra_github (GitHub)',
+          'devops_&_infra_devops_&_infra_docker (Docker)',
+          'devops_&_infra_devops_&_infra_kubernetes (Kubernetes)'
+        ]
+      },
+      {
+        name: 'Microsoft Fabric',
+        icon: '🔷',
+        iconId: '?',
+        iconName: 'Need to find or download',
+        status: 'needs-selection',
+        description: 'Collection has 500+ icons but no obvious Fabric logo. Download from web?'
+      },
+      {
+        name: 'Azure',
+        icon: '☁️',
+        iconId: '?',
+        iconName: 'Need to find or download',
+        status: 'needs-selection',
+        description: 'Collection has Azure services but no main Azure logo. Download from web?'
+      },
+      {
+        name: 'Google Cloud',
+        icon: '🌐',
+        iconId: '?',
+        iconName: 'Need to find or download',
+        status: 'needs-selection',
+        description: 'Collection has GCP services but no main Google Cloud logo. Download from web?'
+      }
+    ];
+
+    const grid = document.getElementById('proposals-grid');
+
+    proposals.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'collection-card';
+
+      let optionsHtml = '';
+      if (p.options) {
+        optionsHtml = '<div style="margin-top: 12px; font-size: 13px; color: #666;">' +
+          '<strong>Options:</strong><ul style="margin: 8px 0 0 20px;">' +
+          p.options.map(opt => `<li style="margin: 4px 0;">${opt}</li>`).join('') +
+          '</ul></div>';
+      }
+
+      card.innerHTML = `
+        <div class="collection-name">${p.name}</div>
+        <div class="icon-preview">
+          <span style="font-size: 40px;">${p.icon}</span>
+        </div>
+        <div class="icon-name">${p.iconId}</div>
+        <div style="font-size: 13px; color: #666; margin-top: 8px;">${p.description}</div>
+        ${optionsHtml}
+        <span class="status ${p.status}">${
+          p.status === 'exists' ? '✓ Ready' :
+          p.status === 'needs-selection' ? '⚠ Needs Selection' :
+          '+ Import'
+        }</span>
+      `;
+
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

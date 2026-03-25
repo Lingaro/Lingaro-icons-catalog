@@ -1,0 +1,39 @@
+<step title="BackgroundTrace" date="2026-03-19T08:23:47.171" instance="2ebaea" url="/api/publish" method="POST" >
+  <step title="Cleanup Xml Logs" date="2026-03-19T08:23:47.184" >
+    <step title="Cleanup Infos" date="2026-03-19T08:23:47.249" totalFiles="256" totalCleanup="96" /><!-- duration: 59ms -->
+  </step><!-- duration: 135ms -->
+  <step title="Creating temporary deployment - FetchDeploymentManager" date="2026-03-19T08:23:47.434" /><!-- duration: 4ms -->
+  <step title="Creating temporary deployment" date="2026-03-19T08:23:47.448" /><!-- duration: 87ms -->
+  <step title="Performing fetch based deployment" date="2026-03-19T08:23:47.635" >
+    <step title="Cleaning up temp folders from previous zip deployments and extracting pushed zip file /tmp/zipdeploy/e31b8036-7d05-482a-b076-7d75e3dde1bf.zip (31.28 MB) to /tmp/zipdeploy/extracted" date="2026-03-19T08:23:49.231" >
+      <step title="ChmodRecursive Process exited with total time taken in ms: 816" date="2026-03-19T08:24:30.161" /><!-- duration: 29ms -->
+    </step><!-- duration: 40987ms -->
+    <step title="Deployment timer started" date="2026-03-19T08:24:32.272" >
+      <step title="DeploymentManager.Deploy(id:60a98d31-5ee0-4e3c-94e9-78503a8040ad)" date="2026-03-19T08:24:32.329" >
+        <step title="Collecting changeset information" date="2026-03-19T08:24:32.466" /><!-- duration: 488ms -->
+        <step title="Updating submodules" date="2026-03-19T08:24:32.976" /><!-- duration: 2130ms -->
+        <step title="Determining deployment builder" date="2026-03-19T08:24:35.419" >
+          <step title="Builder is OryxBuilder" date="2026-03-19T08:24:35.456" /><!-- duration: 18ms -->
+        </step><!-- duration: 75ms -->
+        <step title="PreDeployment: context.CleanOutputPath False" date="2026-03-19T08:24:35.592" >
+          <step title="PreDeployment: context.OutputPath /home/site/wwwroot" date="2026-03-19T08:24:35.801" >
+            <step title="Building" date="2026-03-19T08:24:36.016" >
+              <step title="Executing external process" date="2026-03-19T08:24:36.447" type="process" path="bash" arguments="-c &quot;oryx build /tmp/zipdeploy/extracted -o /home/site/wwwroot --platform python --platform-version 3.11 -p virtualenv_name=antenv --log-file /tmp/build-debug.log  -i /tmp/8de8590f464d576 --compress-destination-dir | tee /tmp/oryx-build.log ; exit $PIPESTATUS &quot;" /><!-- duration: 223385ms -->
+              <step title="Using PythonDeploymentLogParser" date="2026-03-19T08:28:20.260" /><!-- duration: 11ms -->
+              <step title="Modified file to trigger a restart of the app container." date="2026-03-19T08:28:21.312" /><!-- duration: 7ms -->
+              <step title="Skip function trigger and logicapp sync because function is not enabled." date="2026-03-19T08:28:21.351" /><!-- duration: 6ms -->
+              <step title="Purge deployment items" date="2026-03-19T08:28:22.618" >
+                <step title="Remove 7f4f1e45-, Failed, received at 03/19/2026 07:42:28" date="2026-03-19T08:28:22.748" /><!-- duration: 4ms -->
+                <step title="Remove temp-14cc, Failed, received at 03/19/2026 07:41:48" date="2026-03-19T08:28:22.850" /><!-- duration: 4ms -->
+                <step title="Remove 91cf4bae-, Success, received at 03/07/2026 22:54:37" date="2026-03-19T08:28:22.922" /><!-- duration: 6ms -->
+              </step><!-- duration: 318ms -->
+            </step><!-- duration: 226991ms -->
+          </step><!-- duration: 227212ms -->
+          <step title="Cleaning up temp files" date="2026-03-19T08:28:23.017" /><!-- duration: 3918ms -->
+          <step title="Cleaning up temp files" date="2026-03-19T08:28:26.942" /><!-- duration: 507ms -->
+          <step title="Reloading status file with latest updates" date="2026-03-19T08:28:27.483" >
+            <step title="WebHooksManager.PublishEventAsync: PostDeployment" date="2026-03-19T08:28:27.489" /><!-- duration: 97ms -->
+          </step><!-- duration: 106ms -->
+          <step title="Cleaning up temporary deployment - fetch deployment was successful" date="2026-03-19T08:28:27.604" /><!-- duration: 4ms -->
+        </step><!-- duration: 232069ms -->
+      </step><!-- duration: 235351ms -->

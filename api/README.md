@@ -33,12 +33,12 @@ export OPENAI_API_KEY=your_openai_api_key
 ### 3. Run the API
 
 ```bash
-python run_api.py
+python app.py
 ```
 
 Or with development auto-reload:
 ```bash
-python run_api.py --reload
+python app.py --reload
 ```
 
 The API will be available at `http://localhost:8000`.
@@ -165,7 +165,7 @@ curl "http://localhost:8000/search?q=money&semantic=false"
 ### Run Options
 
 ```bash
-python run_api.py --help
+python app.py --help
 
 Options:
   --host TEXT      Host to bind to (default: 0.0.0.0)

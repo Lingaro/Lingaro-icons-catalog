@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgBeakerFlash32Filled = function SvgBeakerFlash32Filled(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M12 13.438V5h-1a1 1 0 1 1 0-2h10a1 1 0 1 1 0 2h-1v8.438q0 .397.077.784a2.5 2.5 0 0 0-1.187 1.12L17.502 18H9.706l1.582-2.285A4 4 0 0 0 12 13.438M16.458 20H8.322l-2.744 3.963C4.104 26.092 5.628 29 8.218 29h9.801l.87-2.5h-2.111c-1.69 0-2.777-1.793-1.995-3.291z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M21.12 15h8.38a.5.5 0 0 1 .428.76L26.748 21h2.491a.75.75 0 0 1 .52 1.29l-8.747 8.427c-.757.73-1.984-.055-1.638-1.05L21 25h-4.251a.75.75 0 0 1-.672-1.083l4.147-8.361A1 1 0 0 1 21.12 15"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgBeakerFlash32Filled);
+
+export { ForwardRef as default };

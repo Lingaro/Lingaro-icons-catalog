@@ -26,6 +26,12 @@ interface ClientConfig {
     baseUrl: string;
     apiKey?: string;
 }
+interface Collection {
+    name: string;
+    icon_count: number;
+    categories: string[];
+    cover_icon_id: string | null;
+}
 
 declare class IconsClient {
     private baseUrl;
@@ -46,6 +52,7 @@ declare class IconsClient {
         name: string;
         count: number;
     }[]>;
+    getCollections(): Promise<Collection[]>;
 }
 
-export { type ClientConfig, type Icon, IconsClient, type SearchOptions, type SearchResponse };
+export { type ClientConfig, type Collection, type Icon, IconsClient, type SearchOptions, type SearchResponse };

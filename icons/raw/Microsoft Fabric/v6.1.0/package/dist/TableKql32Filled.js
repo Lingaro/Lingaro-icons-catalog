@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgTableKql32Filled = function SvgTableKql32Filled(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M25.339 27.583a1 1 0 0 1 .706 1.708l-.707.709a1 1 0 1 1-1.414-1.415l.707-.709c.188-.188.443-.293.708-.293m-2.476-2.476a1 1 0 0 1 .707 1.708l-2.829 2.829a1 1 0 0 1-1.413-1.414l2.828-2.83c.188-.187.442-.292.707-.293M10 29H7.5A4.5 4.5 0 0 1 3 24.5V22h7zm9.245-7q-.136.092-.258.208l-.717.719a2 2 0 0 0-.6 1.409 2 2 0 0 0 2.017 2.018q.055-.002.109-.007l-1.188 1.188a2 2 0 0 0-.561 1.407q0 .03.003.058H12v-7zm9.956-2.995a.8.8 0 0 1 .8.8v8.054a.8.8 0 0 1-1.374.57l-8.053-8.053A.807.807 0 0 1 21.143 19h8.053z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M20.386 22.646a1 1 0 0 1 .71 1.695l-.706.707a1 1 0 0 1-1.099.23.998.998 0 0 1-.315-1.644l.707-.707a1 1 0 0 1 .703-.28ZM10 20H3v-8h7zm10-1.592a1.8 1.8 0 0 0-.47.587l-.055.122c-.116.28-.158.584-.125.883H12v-8h8zM29 18h-7v-6h7zm-19-8H3V7.5A4.5 4.5 0 0 1 7.5 3H10zm10 0h-8V3h8zm4.5-7A4.5 4.5 0 0 1 29 7.5V10h-7V3z"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgTableKql32Filled);
+
+export { ForwardRef as default };

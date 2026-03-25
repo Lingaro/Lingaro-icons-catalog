@@ -43,3 +43,4 @@ data/*.db
 # Deployment artifacts
 lingaro-icons-deploy.zip
 *.zip
+/powerpoint-addin/node_modules

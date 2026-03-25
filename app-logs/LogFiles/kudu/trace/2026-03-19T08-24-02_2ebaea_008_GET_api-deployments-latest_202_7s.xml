@@ -1,0 +1,11 @@
+<step title="Incoming Request" date="2026-03-19T08:24:02.717" instance="2ebaea" url="/api/deployments/latest" method="GET" type="request" pid="769,1,18" Accept="*/*" Host="lingaro-icons-catalog.scm.azurewebsites.net" User-Agent="AZURECLI/2.83.0 (MSI)" Accept-Encoding="gzip, deflate" Authorization="Bea..." x-ms-client-request-id="e9f7999f-236c-11f1-ae0b-4c5f7092ddfc" X-ARR-LOG-ID="e9f7999f-236c-11f1-ae0b-4c5f7092ddfc" CLIENT-IP="89.72.120.163:52135" X-SITE-DEPLOYMENT-ID="lingaro-icons-catalog" WAS-DEFAULT-HOSTNAME="lingaro-icons-catalog.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/latest" X-Client-IP="89.72.120.163" X-Client-Port="52135" >
+  <step title="Cleanup Xml Logs" date="2026-03-19T08:24:02.879" >
+    <step title="Cleanup Infos" date="2026-03-19T08:24:03.030" totalFiles="259" totalCleanup="99" /><!-- duration: 68ms -->
+  </step><!-- duration: 229ms -->
+  <step title="DeploymentService.GetResult" date="2026-03-19T08:24:03.407" >
+    <step title="DeploymentService.GetLatestDeployment" date="2026-03-19T08:24:03.525" >
+      <step title="DeploymentManager.GetResults" date="2026-03-19T08:24:03.708" /><!-- duration: 5526ms -->
+    </step><!-- duration: 5950ms -->
+  </step><!-- duration: 6160ms -->
+  <step title="Outgoing response" date="2026-03-19T08:24:09.698" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 107ms -->
+</step><!-- duration: 7158ms -->

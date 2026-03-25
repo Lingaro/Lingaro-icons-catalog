@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: cli-anything-lingaro-catalog
+Version: 0.1.0
+Summary: CLI harness for the Lingaro Icons Catalog API
+Author: Lingaro
+Requires-Python: >=3.10
+Requires-Dist: click>=8.0
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

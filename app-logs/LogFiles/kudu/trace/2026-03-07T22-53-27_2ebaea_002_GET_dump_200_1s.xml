@@ -1,0 +1,4 @@
+<step title="Incoming Request" date="2026-03-07T22:53:27.529" instance="2ebaea" url="/dump" method="GET" type="request" pid="772,1,7" Host="lingaro-icons-catalog.scm.azurewebsites.net" User-Agent="AZURECLI/2.83.0 (MSI)" Accept-Encoding="identity" Authorization="Bea..." x-ms-client-request-id="721f1e92-1a78-11f1-a856-4c5f7092ddfc" X-ARR-LOG-ID="721f1e92-1a78-11f1-a856-4c5f7092ddfc" CLIENT-IP="89.72.120.163:59230" X-SITE-DEPLOYMENT-ID="lingaro-icons-catalog" WAS-DEFAULT-HOSTNAME="lingaro-icons-catalog.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/dump" X-Client-IP="89.72.120.163" X-Client-Port="59230" >
+  <step title="Cleanup Xml Logs" date="2026-03-07T22:53:27.533" /><!-- duration: 8ms -->
+  <step title="Outgoing response" date="2026-03-07T22:53:28.887" type="response" statusCode="200" statusText="OK" /><!-- duration: 4ms -->
+</step><!-- duration: 1364ms -->

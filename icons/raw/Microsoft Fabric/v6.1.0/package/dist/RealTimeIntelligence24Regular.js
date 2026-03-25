@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgRealTimeIntelligence24Regular = function SvgRealTimeIntelligence24Regular(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    d: "M12.316 3.951 5.51 10.912h3.766c1.189 0 2.2-.78 2.54-1.856zm-3.04 8.461a4.17 4.17 0 0 0 3.885-2.659h7.167c.091 0 .165.074.165.165v.031a.2.2 0 0 1-.046.075l-2.223 2.524-2.292 2.6a3.15 3.15 0 0 0-2.212-.901H4.414a.915.915 0 0 1 0-1.83v-.005zm-6.458-.892 8.917-9.12a1.25 1.25 0 0 1 2.17.85c0 .115-.022.207-.045.33l-.458 4.673h6.926a1.665 1.665 0 0 1 1.623 1.294c.027.117.046.247.047.371-.003.433-.17.828-.445 1.125L12.25 21.6a1.25 1.25 0 0 1-2.17-.85c0-.115.025-.191.046-.33l.457-4.673H4.41a2.415 2.415 0 0 1-1.591-4.227Zm9.272 4.227-.414 4.236 3.264-3.704a1.67 1.67 0 0 0-1.22-.532z",
+    clipRule: "evenodd"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgRealTimeIntelligence24Regular);
+
+export { ForwardRef as default };

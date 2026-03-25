@@ -1,0 +1,41 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgScanCategorize20Filled = function SvgScanCategorize20Filled(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M2 5.25A3.25 3.25 0 0 1 5.25 2h1.346a.75.75 0 1 1 0 1.5H5.25A1.75 1.75 0 0 0 3.5 5.25v1.346a.75.75 0 1 1-1.5 0zm10.654-2.5a.75.75 0 0 1 .75-.75h1.346A3.25 3.25 0 0 1 18 5.25v1.346a.75.75 0 0 1-1.5 0V5.25a1.75 1.75 0 0 0-1.75-1.75h-1.346a.75.75 0 0 1-.75-.75M2.75 11.654a.75.75 0 0 1 .75.75v1.346c0 .966.784 1.75 1.75 1.75h1.346a.75.75 0 0 1 0 1.5H5.25A3.25 3.25 0 0 1 2 13.75v-1.346a.75.75 0 0 1 .75-.75m14.5 0a.75.75 0 0 1 .75.75v1.346A3.25 3.25 0 0 1 14.75 17h-1.346a.75.75 0 0 1 0-1.5h1.346a1.75 1.75 0 0 0 1.75-1.75v-1.346a.75.75 0 0 1 .75-.75M10 6.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5M7.293 9H4.5a.5.5 0 0 0 0 1h2.793l-1.147 1.146a.5.5 0 0 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2a.5.5 0 1 0-.708.708zM10.5 9a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1z"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgScanCategorize20Filled);
+
+export { ForwardRef as default };

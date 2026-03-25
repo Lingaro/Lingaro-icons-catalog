@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgScriptKql24Filled = function SvgScriptKql24Filled(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M20 2.038V2q-.1 0-.2.007V2H7.75A3.25 3.25 0 0 0 4.5 5.25V15.5h7.75q.11 0 .214.018a1.982 1.982 0 0 1 1.68-3.029l4.388-.034V4.61c0-1.095.59-2.052 1.468-2.572M10.898 17a2.225 2.225 0 0 0-.047 2.49c.184.285.432.525.724.7A2.24 2.24 0 0 0 11.06 22H4c-1.623 0-3-1.235-3-2.925v-1.173c0-.498.404-.902.902-.902zM23.25 4.375v2.66c0 .948-.767 1.715-1.714 1.715H20V4.375a1.625 1.625 0 1 1 3.25 0"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "m14.155 13.99 6.32-.05a.5.5 0 0 1 .502.505l-.047 6.32a.5.5 0 0 1-.854.35l-6.27-6.272a.5.5 0 0 1 .35-.853Zm1.535 4.835a.75.75 0 0 1 .244 1.224l-2.122 2.12a.75.75 0 0 1-1.06-1.06l2.12-2.121a.75.75 0 0 1 .818-.163m-1.702-.72-.707.707a.75.75 0 0 1-1.06-1.061l.707-.707a.75.75 0 0 1 1.06 1.06Zm2.12 3.535.707-.707a.751.751 0 0 1 1.281.53.75.75 0 0 1-.22.53l-.707.707a.75.75 0 0 1-1.06-1.06Z"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgScriptKql24Filled);
+
+export { ForwardRef as default };

@@ -63,7 +63,7 @@ pip install -r scripts/requirements.txt
 export OPENAI_API_KEY=your_key
 
 # Run the server
-python run_api.py
+python app.py
 ```
 
 API available at http://localhost:8000 with docs at http://localhost:8000/docs
@@ -86,7 +86,6 @@ scripts/
   annotate.py     # Generate icon metadata with GPT-4
   generate_embeddings.py  # Create embeddings for semantic search
   scan_icons.py   # Scan icon directory
-  serve.py        # Simple dev server for static site
 assets/
   data/icons.json # Icon metadata with embeddings
   js/search.js    # Client-side search for static site

@@ -1,0 +1,19 @@
+<step title="Incoming Request" date="2026-03-19T08:23:42.016" instance="2ebaea" url="/api/publish?type=zip&amp;async=True" method="POST" type="request" pid="769,1,22" Accept="*/*" Host="lingaro-icons-catalog.scm.azurewebsites.net" User-Agent="AZURECLI/2.83.0 (MSI)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cache-Control="no-cache" Content-Type="application/octet-stream" Cookie="ARRAffinity=2ebaea0b253f5165daf3ffe9d2db6809fcf8714ea592cf11b0c7e00709509b10; ARRAffinitySameSite=2ebaea0b253f5165daf3ffe9d2db6809fcf8714ea592cf11b0c7e00709509b10" Content-Length="32801937" x-ms-client-request-id="e9f7999f-236c-11f1-ae0b-4c5f7092ddfc" x-ms-artifact-checksum="b0ad350a2024e52562058149c418ab4da8d1c8d74a70abcaeb6eb73d4d48c9a6" X-ARR-LOG-ID="e9f7999f-236c-11f1-ae0b-4c5f7092ddfc" CLIENT-IP="89.72.120.163:52868" X-SITE-DEPLOYMENT-ID="lingaro-icons-catalog" WAS-DEFAULT-HOSTNAME="lingaro-icons-catalog.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/publish?type=zip&amp;async=True" X-Client-IP="89.72.120.163" X-Client-Port="52868" >
+  <step title="Cleanup Xml Logs" date="2026-03-19T08:23:42.132" >
+    <step title="Cleanup Infos" date="2026-03-19T08:23:42.257" totalFiles="255" totalCleanup="95" /><!-- duration: 118ms -->
+  </step><!-- duration: 273ms -->
+  <step title="OneDeploy" date="2026-03-19T08:23:42.972" >
+    <step title="None repository commit" date="2026-03-19T08:23:43.011" >
+      <step title="Commit id: 60a98d31-5ee0-4e3c-94e9-78503a8040ad" date="2026-03-19T08:23:43.030" Message="N/A" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 18ms -->
+    </step><!-- duration: 50ms -->
+    <step title="Starting PushDeployAsync" date="2026-03-19T08:23:43.079" /><!-- duration: 11ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/e31b8036-7d05-482a-b076-7d75e3dde1bf.zip" date="2026-03-19T08:23:43.195" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/e31b8036-7d05-482a-b076-7d75e3dde1bf.zip" date="2026-03-19T08:23:43.244" /><!-- duration: 55ms -->
+    </step><!-- duration: 3910ms -->
+    <step title="Start deployment in the background" date="2026-03-19T08:23:47.154" >
+      <step title="Acquiring Deployment Lock" date="2026-03-19T08:23:47.338" /><!-- duration: 11ms -->
+      <step title="Acquired Deployment Lock" date="2026-03-19T08:23:47.424" /><!-- duration: 7ms -->
+    </step><!-- duration: 389ms -->
+  </step><!-- duration: 4595ms -->
+  <step title="Outgoing response" date="2026-03-19T08:23:47.584" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 4ms -->
+</step><!-- duration: 5578ms -->

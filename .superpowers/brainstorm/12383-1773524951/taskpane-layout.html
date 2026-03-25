@@ -1,0 +1,169 @@
+<h2>Task Pane Layout</h2>
+<p class="subtitle">How the add-in panel looks inside PowerPoint (300px wide)</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="width:300px;margin:0 auto;background:#fff;border:1px solid #d1d1d1;border-radius:8px;overflow:hidden;font-family:'Segoe UI',sans-serif;font-size:12px;">
+        <!-- Header -->
+        <div style="background:#783cbe;color:white;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="white"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>
+          <span style="font-weight:600;font-size:13px;">Lingaro Icons</span>
+        </div>
+        <!-- Search -->
+        <div style="padding:8px 12px;">
+          <div style="background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;padding:6px 10px;display:flex;align-items:center;gap:6px;color:#888;">
+            <span>🔍</span> <span>Search icons...</span>
+          </div>
+        </div>
+        <!-- Collections -->
+        <div style="padding:4px 12px 8px;">
+          <div style="font-weight:600;font-size:11px;color:#666;text-transform:uppercase;margin-bottom:6px;">Collections</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">
+            <span style="background:#f0e6ff;color:#783cbe;padding:3px 8px;border-radius:12px;font-size:10px;font-weight:500;">All</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">Lingaro</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">Azure</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">Fabric</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">GCP</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">Databricks</span>
+          </div>
+        </div>
+        <!-- Categories -->
+        <div style="padding:4px 12px 8px;">
+          <div style="font-weight:600;font-size:11px;color:#666;text-transform:uppercase;margin-bottom:6px;">Categories</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">Data Analysis</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">Buildings</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">Personas</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">Money</span>
+            <span style="background:#f5f5f5;color:#666;padding:3px 8px;border-radius:12px;font-size:10px;">+12 more</span>
+          </div>
+        </div>
+        <!-- Icon Grid -->
+        <div style="padding:4px 12px 12px;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="#783cbe" stroke-width="1.5"/><circle cx="14" cy="10" r="3" fill="#783cbe"/><path d="M8 20c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="none" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="5" y="8" width="18" height="14" rx="2" fill="none" stroke="#783cbe" stroke-width="1.5"/><line x1="5" y1="12" x2="23" y2="12" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 4l3 6h6l-5 4 2 7-6-4-6 4 2-7-5-4h6z" fill="#783cbe"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="#783cbe" stroke-width="1.5"/><path d="M10 14l3 3 5-6" fill="none" stroke="#783cbe" stroke-width="2"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="6" y="4" width="16" height="20" rx="2" fill="none" stroke="#783cbe" stroke-width="1.5"/><line x1="10" y1="10" x2="18" y2="10" stroke="#783cbe" stroke-width="1.5"/><line x1="10" y1="14" x2="18" y2="14" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="#783cbe" stroke-width="1.5"/><line x1="14" y1="8" x2="14" y2="15" stroke="#783cbe" stroke-width="1.5"/><line x1="14" y1="15" x2="18" y2="18" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><path d="M6 22V10l8-6 8 6v12H6z" fill="none" stroke="#783cbe" stroke-width="1.5"/><rect x="11" y="15" width="6" height="7" fill="none" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 4C8.5 4 4 8.5 4 14s4.5 10 10 10 10-4.5 10-10S19.5 4 14 4z" fill="none" stroke="#783cbe" stroke-width="1.5"/><path d="M4 14h20M14 4c-3 3-3 17 0 20M14 4c3 3 3 17 0 20" fill="none" stroke="#783cbe" stroke-width="1"/></svg>
+            </div>
+          </div>
+        </div>
+        <!-- Hover tooltip hint -->
+        <div style="padding:0 12px 10px;text-align:center;color:#999;font-size:10px;">
+          Click icon to insert into slide
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A: Compact — Filters as Pills</h3>
+      <p>Collections and categories shown as pill chips. More vertical space for the icon grid. Quick filtering by tapping pills.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="width:300px;margin:0 auto;background:#fff;border:1px solid #d1d1d1;border-radius:8px;overflow:hidden;font-family:'Segoe UI',sans-serif;font-size:12px;">
+        <!-- Header -->
+        <div style="background:#783cbe;color:white;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="white"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>
+          <span style="font-weight:600;font-size:13px;">Lingaro Icons</span>
+        </div>
+        <!-- Search -->
+        <div style="padding:8px 12px;">
+          <div style="background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;padding:6px 10px;display:flex;align-items:center;gap:6px;color:#888;">
+            <span>🔍</span> <span>Search icons...</span>
+          </div>
+        </div>
+        <!-- Collection dropdown -->
+        <div style="padding:0 12px 8px;">
+          <div style="border:1px solid #e0e0e0;border-radius:4px;padding:6px 10px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#333;">All Collections</span>
+            <span style="color:#999;">▼</span>
+          </div>
+        </div>
+        <!-- Category dropdown -->
+        <div style="padding:0 12px 8px;">
+          <div style="border:1px solid #e0e0e0;border-radius:4px;padding:6px 10px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#333;">All Categories</span>
+            <span style="color:#999;">▼</span>
+          </div>
+        </div>
+        <!-- Icon Grid -->
+        <div style="padding:4px 12px 12px;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="#783cbe" stroke-width="1.5"/><circle cx="14" cy="10" r="3" fill="#783cbe"/><path d="M8 20c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="none" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="5" y="8" width="18" height="14" rx="2" fill="none" stroke="#783cbe" stroke-width="1.5"/><line x1="5" y1="12" x2="23" y2="12" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 4l3 6h6l-5 4 2 7-6-4-6 4 2-7-5-4h6z" fill="#783cbe"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="#783cbe" stroke-width="1.5"/><path d="M10 14l3 3 5-6" fill="none" stroke="#783cbe" stroke-width="2"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><rect x="6" y="4" width="16" height="20" rx="2" fill="none" stroke="#783cbe" stroke-width="1.5"/><line x1="10" y1="10" x2="18" y2="10" stroke="#783cbe" stroke-width="1.5"/><line x1="10" y1="14" x2="18" y2="14" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="#783cbe" stroke-width="1.5"/><line x1="14" y1="8" x2="14" y2="15" stroke="#783cbe" stroke-width="1.5"/><line x1="14" y1="15" x2="18" y2="18" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><path d="M6 22V10l8-6 8 6v12H6z" fill="none" stroke="#783cbe" stroke-width="1.5"/><rect x="11" y="15" width="6" height="7" fill="none" stroke="#783cbe" stroke-width="1.5"/></svg>
+            </div>
+            <div style="aspect-ratio:1;background:#f9f5ff;border:1px solid #e8daf5;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+              <svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 4C8.5 4 4 8.5 4 14s4.5 10 10 10 10-4.5 10-10S19.5 4 14 4z" fill="none" stroke="#783cbe" stroke-width="1.5"/><path d="M4 14h20M14 4c-3 3-3 17 0 20M14 4c3 3 3 17 0 20" fill="none" stroke="#783cbe" stroke-width="1"/></svg>
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 12px 10px;text-align:center;color:#999;font-size:10px;">
+          Click icon to insert into slide
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B: Dropdowns — Classic Filters</h3>
+      <p>Collection and category as dropdown selectors. More familiar pattern, but takes vertical space from the grid. Cleaner when there are many categories.</p>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top:20px;">
+  <div class="pros">
+    <h4>A: Pills</h4>
+    <ul>
+      <li>More icons visible at once</li>
+      <li>Faster multi-filter selection</li>
+      <li>Modern, visual feel</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>B: Dropdowns</h4>
+    <ul>
+      <li>Scales better with many categories</li>
+      <li>Familiar Office-like pattern</li>
+      <li>Cleaner with long category names</li>
+    </ul>
+  </div>
+</div>

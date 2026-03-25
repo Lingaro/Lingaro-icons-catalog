@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Collection Cover Icons</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #1a1a1a;
+      font-size: 32px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .section h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #333;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 24px;
+      border: 2px solid #e0e0e0;
+      transition: all 0.2s;
+    }
+    .card:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .collection-name {
+      font-weight: 600;
+      font-size: 18px;
+      color: #1a1a1a;
+    }
+    .status {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status.ready {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .status.import {
+      background: #e3f2fd;
+      color: #0277bd;
+    }
+    .status.missing {
+      background: #ffebee;
+      color: #c62828;
+    }
+    .icon-preview {
+      width: 100px;
+      height: 100px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      border: 2px solid #e0e0e0;
+    }
+    .icon-preview span {
+      font-size: 50px;
+    }
+    .icon-id {
+      font-size: 12px;
+      color: #666;
+      font-family: 'Courier New', monospace;
+      word-break: break-all;
+      line-height: 1.4;
+    }
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 20px;
+      border-radius: 4px;
+      margin-top: 30px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .note strong {
+      color: #856404;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .note ul {
+      margin: 10px 0 0 20px;
+    }
+    .note li {
+      margin: 6px 0;
+    }
+    .summary {
+      background: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      padding: 20px;
+      border-radius: 4px;
+      margin-bottom: 30px;
+    }
+    .summary h3 {
+      color: #2e7d32;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    .summary-items {
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      color: #333;
+    }
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .summary-item::before {
+      content: "✓";
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✅ Final Collection Cover Icons</h1>
+    <p class="subtitle">
+      Fixed, branded icons for each collection based on your selections.
+    </p>
+
+    <div class="summary">
+      <h3>Implementation Summary</h3>
+      <div class="summary-items">
+        <div class="summary-item">8 collections with fixed cover icons</div>
+        <div class="summary-item">6 ready to use (already in database)</div>
+        <div class="summary-item">1 needs import (devops.png)</div>
+        <div class="summary-item">1 needs sourcing (Azure main logo)</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>✅ Ready to Use (In Database)</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">databricks</span>
+            <span class="status ready">Ready</span>
+          </div>
+          <div class="icon-preview"><span>🧱</span></div>
+          <div class="icon-id">databricks_databricks_11_databricks</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">Apache</span>
+            <span class="status ready">Ready</span>
+          </div>
+          <div class="icon-preview"><span>⚡</span></div>
+          <div class="icon-id">apache_apache_apachespark</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">Data & Analytics</span>
+            <span class="status ready">Ready</span>
+          </div>
+          <div class="icon-preview"><span>📊</span></div>
+          <div class="icon-id">data_&_analytics_data_&_analytics__cover_da</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">ML & AI</span>
+            <span class="status ready">Ready</span>
+          </div>
+          <div class="icon-preview"><span>🤖</span></div>
+          <div class="icon-id">lingaro_set4_data_analysis_charts_ai</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">Microsoft Fabric</span>
+            <span class="status ready">Ready</span>
+          </div>
+          <div class="icon-preview"><span>🔷</span></div>
+          <div class="icon-id">microsoft_fabric_services_fabric_20_color</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">Google Cloud</span>
+            <span class="status ready">Ready</span>
+          </div>
+          <div class="icon-preview"><span>🌐</span></div>
+          <div class="icon-id">google_cloud_google_cloud__cover_gcp</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📥 Needs Import</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">lingaro_set4</span>
+            <span class="status import">Import</span>
+          </div>
+          <div class="icon-preview"><span>🏢</span></div>
+          <div class="icon-id">Source: assets/branding/lingaro-logo_small_transparent.png</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">DevOps & Infra</span>
+            <span class="status import">Import</span>
+          </div>
+          <div class="icon-preview"><span>⚙️</span></div>
+          <div class="icon-id">Source: icons/DevOps & Infra/devops.png</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>❌ Needs Sourcing</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <span class="collection-name">Azure</span>
+            <span class="status missing">Missing</span>
+          </div>
+          <div class="icon-preview"><span>☁️</span></div>
+          <div class="icon-id">No Azure main logo found in collection. Need to download from web or find alternative.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>⚠️ Azure Logo Missing</strong>
+      The Azure collection contains 500+ service-specific icons (Kubernetes, Storage, etc.) but no main Azure logo.
+      <br><br>
+      <strong>Options:</strong>
+      <ul>
+        <li><strong>Option A:</strong> Download official Azure logo from Microsoft and add it to the catalog</li>
+        <li><strong>Option B:</strong> Use one of the existing Azure service icons (e.g., Azure Cloud Shell)</li>
+        <li><strong>Option C:</strong> Skip Azure for now, use first icon as fallback</li>
+      </ul>
+      <br>
+      <strong>Which would you prefer?</strong>
+    </div>
+  </div>
+</body>
+</html>

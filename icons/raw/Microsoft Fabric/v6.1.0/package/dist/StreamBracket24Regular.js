@@ -1,0 +1,47 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgStreamBracket24Regular = function SvgStreamBracket24Regular(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M2 4.25a.75.75 0 0 0 1.5 0v-1a.75.75 0 0 1 .75-.75h15.5a.75.75 0 0 1 .75.75v1a.75.75 0 0 0 1.5 0v-1A2.25 2.25 0 0 0 19.75 1H4.25A2.25 2.25 0 0 0 2 3.25z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M14.75 4.5A5.25 5.25 0 0 0 9.5 9.75v.5a.75.75 0 0 1-.75.75h-1a.75.75 0 0 0 0 1.5h1A2.25 2.25 0 0 0 11 10.25v-.5A3.75 3.75 0 0 1 14.75 6h1.5a.75.75 0 0 0 0-1.5z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M12 10.25A3.25 3.25 0 0 1 15.25 7h2a.75.75 0 0 1 0 1.5h-2a1.75 1.75 0 0 0-1.75 1.75v.498q0 .03-.002.06l.002.06v.878a3.25 3.25 0 0 1-3.25 3.25h-2.5a.75.75 0 1 1 0-1.5h2.5a1.75 1.75 0 0 0 1.75-1.75v-.877q0-.03.002-.06L12 10.748zM21.25 17a.75.75 0 0 1 .75.75v1A2.25 2.25 0 0 1 19.75 21H4.25A2.25 2.25 0 0 1 2 18.75v-1a.75.75 0 0 1 1.5 0v1c0 .414.336.75.75.75h15.5a.75.75 0 0 0 .75-.75v-1a.75.75 0 0 1 .75-.75"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M8.75 16h2a3.75 3.75 0 0 0 3.75-3.75v-.5a2.25 2.25 0 0 1 2.25-2.25h.5a.75.75 0 1 1 0 1.5h-.5a.75.75 0 0 0-.75.75v.5c0 2.9-2.35 5.25-5.25 5.25h-2a.75.75 0 1 1 0-1.5"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgStreamBracket24Regular);
+
+export { ForwardRef as default };

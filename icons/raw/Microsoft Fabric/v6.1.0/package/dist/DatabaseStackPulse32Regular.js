@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgDatabaseStackPulse32Regular = function SvgDatabaseStackPulse32Regular(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M16 2c6.075 0 11 2.239 11 5v7.935a9 9 0 0 0-2-.712V9.876C23.01 11.16 19.72 12 16 12s-7.01-.84-9-2.124V16c0 .189.091.47.473.83.384.363.992.736 1.827 1.07 1.442.577 3.412.98 5.647 1.077a9 9 0 0 0-.71 1.963c-2.167-.148-4.135-.565-5.68-1.183A9.5 9.5 0 0 1 7 18.975V25c0 .114.193.871 2.05 1.715 1.578.717 3.848 1.223 6.462 1.28a9 9 0 0 0 1.788 1.97Q16.66 30 16 30c-6.075 0-11-2.239-11-5V7c0-2.761 4.925-5 11-5m6.95 6.715C24.808 7.87 25 7.115 25 7s-.193-.871-2.05-1.715C21.276 4.523 18.82 4 16 4s-5.275.523-6.95 1.285C7.192 6.13 7 6.885 7 7s.193.871 2.05 1.715C10.724 9.477 13.18 10 16 10s5.275-.523 6.95-1.285"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M23 30.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15m-1.587-11.25a.75.75 0 0 1 .695.502L23.5 23.73l1.042-2.978a.75.75 0 0 1 1.411-.013l.569 1.531h.728a.75.75 0 0 1 0 1.5H26a.75.75 0 0 1-.703-.489l-.026-.07-1.063 3.037a.75.75 0 0 1-1.416 0l-1.429-4.082-.437 1.126a.75.75 0 0 1-.699.478H18.75a.75.75 0 0 1 0-1.5h.964l.987-2.541a.75.75 0 0 1 .712-.479"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgDatabaseStackPulse32Regular);
+
+export { ForwardRef as default };

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "cli-anything-lingaro-catalog"
+version = "0.1.0"
+description = "CLI for the Lingaro Icons Catalog — search and download Azure, GCP, Databricks, Fabric, and Lingaro icons"
+readme = "LINGARO_CATALOG.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Lingaro" }]
+keywords = ["lingaro", "icons", "azure", "gcp", "databricks", "cli"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+]
+dependencies = [
+    "click>=8.0",
+    "httpx>=0.24",
+    "requests>=2.28",
+]
+
+[project.scripts]
+cli-anything-lingaro-catalog = "cli_anything.lingaro_catalog.lingaro_catalog_cli:main"
+
+[project.urls]
+Homepage = "https://lingaro-icons-catalog.azurewebsites.net"
+Repository = "https://github.com/lingaro/Lingaro-icons-catalog"
+
+[tool.setuptools.packages.find]
+include = ["cli_anything.*"]

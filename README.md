@@ -3,258 +3,56 @@
 A searchable web catalog for the Lingaro icon collection featuring 248+ SVG icons with AI-powered annotations and semantic search capabilities.
 
 ![Lingaro Icons Catalog](https://img.shields.io/badge/icons-248+-purple)
-![Built with Jekyll](https://img.shields.io/badge/built%20with-Jekyll-red)
 
-## Overview
+## Quick Start
 
-The Lingaro Icons Catalog is a web-based interface for browsing, searching, and downloading corporate icons. All icons use the Lingaro brand color (`#783cbe`) and are organized into thematic categories.
+### Start the Web Server
 
-**Key Features:**
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Start web server (Windows)
+python app.py
+```
+
+✅ **Web UI:** http://localhost:8000
+📚 **API Docs:** http://localhost:8000/docs
+
+> **Note:** On Linux/Azure use `gunicorn -c gunicorn.conf.py api.main:app` instead.
+
+See [QUICK-START.md](QUICK-START.md) for more options.
+
+## Features
+
 - 🔍 Full-text search with AI-powered semantic matching
 - 📁 18 organized categories (Data Analysis, Marketing, Logistics, etc.)
 - 🏷️ Automated tagging and descriptions using OpenAI
 - 📱 Responsive grid layout
 - ⬇️ One-click SVG download
-- 🚀 Static site deployment (GitHub Pages ready)
-
-## Prerequisites
-
-### For Running the Catalog
-- **Ruby** (2.7 or higher) - for Jekyll
-- **Bundler** - Ruby dependency manager
-
-### For Icon Management
-- **Python** (3.8 or higher)
-- **OpenAI API access** - for icon annotation (optional)
-
-## Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Lingaro/Lingaro-icons-catalog.git
-cd Lingaro-icons-catalog
-```
-
-### 2. Install Ruby Dependencies
-
-```bash
-gem install bundler
-bundle install
-```
-
-### 3. Install Python Dependencies (for icon management)
-
-```bash
-cd scripts
-python -m venv ../.venv
-source ../.venv/bin/activate  # On Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 4. Configure Environment (Optional)
-
-Create a `.env` file in the project root for OpenAI API access:
-
-```env
-OPENAI_API_KEY=your-api-key-here
-OPENAI_BASE_URL=https://api.openai.com/v1
-```
-
-## Usage
-
-### Launch the Catalog Locally
-
-#### Option 1: Using Jekyll (Recommended)
-
-```bash
-bundle exec jekyll serve
-```
-
-Visit `http://localhost:4000/Lingaro-icons-catalog/` in your browser.
-
-#### Option 2: Using Python Server
-
-```bash
-python scripts/serve.py
-```
-
-Visit `http://localhost:8000` in your browser.
-
-### Search and Browse Icons
-
-- **Search bar**: Type keywords (e.g., "data", "cloud", "arrow")
-- **Category filter**: Click category buttons to filter by theme
-- **Download**: Click any icon card to download the SVG file
+- 🚀 REST API with FastAPI
 
 ## Managing Icons
 
 ### Adding New Icons
 
-1. **Organize icons** in the directory structure:
-   ```
-   icons/
-     lingaro_set4/
-       YourCategory/
-         your-icon.svg
-   ```
+1. Place SVG files in `icons/lingaro_set4/YourCategory/`
+2. Follow naming conventions: lowercase with hyphens (`user-profile.svg`)
+3. Ensure Lingaro purple color: `#783cbe`
 
-2. **Follow naming conventions**:
-   - Use lowercase with hyphens: `user-profile.svg`
-   - Descriptive names: `cloud-storage.svg` instead of `icon1.svg`
-
-3. **Ensure consistent format**:
-   - SVG format with XML declaration
-   - Fill color using `.cls-1` class
-   - Lingaro purple: `#783cbe`
-
-### Scanning Icons
-
-After adding new icons, scan the directory to update the catalog:
+### Update Catalog
 
 ```bash
-cd scripts
-python scan_icons.py
+# Scan for new icons
+python scripts/scan_icons.py
+
+# (Optional) Generate AI descriptions
+python scripts/annotate.py
 ```
-
-This creates/updates `assets/data/icons.json` with:
-- File paths
-- Icon names
-- Categories
-- Basic tags (derived from filename and category)
-
-**Output:** `assets/data/icons.json`
-
-### Annotating Icons with AI
-
-For enhanced search and descriptions, use AI annotation:
-
-```bash
-cd scripts
-python annotate.py
-```
-
-This script:
-- Reads all icons from `icons.json`
-- Converts SVG to PNG for vision analysis
-- Sends images to OpenAI with icon metadata
-- Generates semantic descriptions and tags
-- Updates `icons.json` with enriched data
-
-**Requirements:**
-- Valid `OPENAI_API_KEY` in `.env`
-- Internet connection
-- OpenAI API credits
-
-**Cost consideration:** Processes ~248 icons with vision API calls.
-
-### Generating Search Embeddings (Optional)
-
-For semantic search capabilities:
-
-```bash
-cd scripts
-python generate_embeddings.py
-```
-
-This generates vector embeddings for each icon's description to enable similarity-based search.
 
 ## Deployment
 
-### Deploy to Azure Web App
-
-#### Quick Deploy (Azure Cloud Shell)
-
-1. **Clone the repo in Azure Cloud Shell:**
-   ```bash
-   git clone https://github.com/Lingaro/Lingaro-icons-catalog.git
-   cd Lingaro-icons-catalog
-   ```
-
-2. **Set variables:**
-   ```bash
-   RG="rg-Lingaro-Databricks-Demo-01"
-   PLAN="dc-web-apps"
-   APP="lingaro-icons-catalog"
-   OPENAI_KEY="your-openai-key"
-   ```
-
-3. **Create and configure Web App:**
-   ```bash
-   # Create web app (skip if exists)
-   az webapp create --name $APP --resource-group $RG --plan $PLAN --runtime "PYTHON:3.11"
-
-   # Configure settings
-   az webapp config appsettings set --name $APP --resource-group $RG \
-     --settings OPENAI_API_KEY=$OPENAI_KEY SCM_DO_BUILD_DURING_DEPLOYMENT=true
-
-   az webapp config set --name $APP --resource-group $RG \
-     --startup-file "gunicorn -w 2 -k uvicorn.workers.UvicornWorker api.main:app --bind 0.0.0.0:8000"
-   ```
-
-4. **Deploy:**
-   ```bash
-   # Create deployment package
-   zip -r deploy.zip api assets icons requirements.txt run_api.py
-
-   # Deploy
-   az webapp deploy --name $APP --resource-group $RG --src-path deploy.zip --type zip
-   ```
-
-5. **Access your API:**
-   - API: `https://lingaro-icons-catalog.azurewebsites.net`
-   - Docs: `https://lingaro-icons-catalog.azurewebsites.net/docs`
-
-#### Using PowerShell Script (Local)
-
-```powershell
-# Create ZIP and show Cloud Shell commands
-.\prepare-deploy.ps1
-
-# Or full deployment (requires Azure CLI)
-.\deploy-azure.ps1 -OpenAIKey "your-key"
-```
-
----
-
-### Deploy to GitHub Pages
-
-1. **Update configuration** in `_config.yml`:
-   ```yaml
-   url: "https://your-username.github.io"
-   baseurl: "/Lingaro-icons-catalog"
-   github_repo: "https://github.com/your-username/Lingaro-icons-catalog"
-   ```
-
-2. **Push to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push origin main
-   ```
-
-3. **Enable GitHub Pages**:
-   - Go to repository Settings → Pages
-   - Source: Deploy from branch `main`
-   - Folder: `/ (root)`
-
-4. **Access your catalog** at:
-   `https://your-username.github.io/Lingaro-icons-catalog/`
-
-### Deploy to Other Platforms
-
-The `_site` directory contains the built static site and can be deployed to:
-- Netlify
-- Vercel
-- AWS S3 + CloudFront
-- Any static hosting service
-
-Build the site first:
-```bash
-bundle exec jekyll build
-```
-
-Then upload the `_site` directory contents.
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed deployment instructions for Azure, GitHub Pages, and other platforms.
 
 ## Project Structure
 
@@ -277,7 +75,6 @@ Lingaro-icons-catalog/
 │   ├── scan_icons.py          # Scan icons directory
 │   ├── annotate.py            # AI annotation
 │   ├── generate_embeddings.py # Semantic search embeddings
-│   ├── serve.py               # Dev server
 │   └── requirements.txt       # Python dependencies
 ├── _includes/
 │   ├── icon-card.html         # Icon card component
@@ -292,137 +89,64 @@ Lingaro-icons-catalog/
 └── README.md                   # This file
 ```
 
-## Configuration
+## API Endpoints
 
-### Jekyll Configuration (`_config.yml`)
+- `GET /search?q={query}` - Search icons with text/semantic matching
+- `GET /icons` - List all icons (paginated)
+- `GET /icons/{id}` - Get specific icon
+- `GET /categories` - List all categories
+- `GET /tags` - Popular tags
 
-Key settings:
-- `title`: Site title
-- `description`: Site description
-- `baseurl`: Path prefix for GitHub Pages
-- `icon_color`: Brand color for icons
-- `github_repo`: Repository URL
+Full API documentation at http://localhost:8000/docs
 
-### Icon Metadata (`assets/data/icons.json`)
+## Categories
 
-Generated by scan/annotate scripts. Structure:
-```json
-{
-  "icons": [
-    {
-      "name": "cloud-storage",
-      "path": "icons/lingaro_set4/Data Analysis Charts/cloud-storage.svg",
-      "category": "Data Analysis Charts",
-      "set": "lingaro_set4",
-      "tags": ["cloud", "storage", "data", "server"],
-      "description": "Cloud storage icon representing data storage services",
-      "color": "#783cbe"
-    }
-  ],
-  "categories": ["Abstract", "Data Analysis Charts", ...],
-  "sets": ["lingaro_set4"]
-}
-```
-
-## Icon Categories
-
-The catalog includes 18 categories:
-- **Abstract** - Conceptual icons (brainstorm, puzzle, rocket)
-- **Arrows Icons** - Navigation and directional
-- **Buildings** - Corporate, warehouse, home
-- **Data Analysis Charts** - AI, cloud, database, charts
-- **Documents** - Document types, awards, certificates
-- **Globes** - Network and planet icons
-- **Green Energy** - Ecology and sustainability
-- **Hands** - Hand gestures
-- **Health** - Health, sports, wellness
-- **Logistic** - Shipping and transportation
-- **Marketing** - Marketing and communication
-- **Mobile phones** - Device icons
-- **Money** - Financial icons
-- **Monitors** - Screens and displays
-- **Personas** - People and users
-- **Safety** - Security icons
-- **Social Media** - Social platform icons
-- **Time** - Clocks and calendars
-
-## Git Operations
-
-### Refresh Cloned Repository
-
-To update your local clone with the latest changes from GitHub:
-
-```bash
-# Fetch and merge latest changes
-git pull origin master
-
-# Or fetch first, then merge manually
-git fetch origin
-git merge origin/master
-```
-
-### Force Refresh (Discard Local Changes)
-
-```bash
-# Reset to match remote (WARNING: discards local changes)
-git fetch origin
-git reset --hard origin/master
-```
-
-### Update Azure Deployment After Git Pull
-
-```bash
-# In Azure Cloud Shell after pulling updates
-cd Lingaro-icons-catalog
-git pull origin master
-
-# Redeploy
-zip -r deploy.zip api assets icons requirements.txt run_api.py
-az webapp deploy --name lingaro-icons-catalog --resource-group rg-Lingaro-Databricks-Demo-01 --src-path deploy.zip --type zip
-```
+18 organized categories including:
+- Data Analysis Charts (AI, cloud, database)
+- Marketing & Communication
+- Logistics & Transportation
+- Documents & Certificates
+- And more...
 
 ---
 
-## Troubleshooting
+## How It Works
 
-### Jekyll won't start
-```bash
-# Update dependencies
-bundle update
-bundle exec jekyll serve --trace
+The app is a **single-page web application** served by FastAPI:
+
+- **Frontend:** `index.html` + `assets/` (HTML/CSS/JS)
+- **Backend:** FastAPI server (`api/` folder)
+- **Data:** SQLite database (`icons.db`) + SVG files (`icons/` folder)
+
+When you run `python app.py`:
+1. FastAPI serves `index.html` at http://localhost:8000
+2. The web UI loads and calls REST API endpoints
+3. No build step needed - just start the server!
+
+### Project Structure
+```
+index.html              # Main web app
+assets/
+  css/style.css        # Styles
+  js/                  # Client-side JavaScript
+  data/icons.json      # Icon metadata (legacy)
+icons/                 # SVG icon files organized by category
+api/                   # FastAPI backend
+  main.py             # API routes and server setup
+  models.py           # Data models
+  search.py           # Search engine
+icons.db              # SQLite database
+app.py                # Server launcher
+scripts/
+  scan_icons.py       # Scan icons directory
+  annotate.py         # AI annotation
 ```
 
-### Python scripts fail
-```bash
-# Verify Python version
-python --version  # Should be 3.8+
-
-# Reinstall dependencies
-pip install -r scripts/requirements.txt --upgrade
-```
-
-### Icons not appearing
-1. Check `assets/data/icons.json` exists and is valid JSON
-2. Run `python scripts/scan_icons.py` to regenerate
-3. Clear Jekyll cache: `rm -rf _site .jekyll-cache`
-
-### OpenAI annotation fails
-1. Verify `.env` file exists with valid `OPENAI_API_KEY`
-2. Check API quota and billing
-3. Test with smaller batch: modify `annotate.py` to process fewer icons
-
-## Contributing
-
-### Adding Icons
-1. Place SVG in appropriate category folder
-2. Run `scan_icons.py` to update catalog
-3. Optionally run `annotate.py` for AI descriptions
-4. Commit changes including updated `icons.json`
-
-### Modifying Design
-- Edit Sass files in `_sass/`
-- Update layouts in `_layouts/`
-- Modify components in `_includes/`
+### Contributing
+1. Add SVG files to appropriate category
+2. Run `python scripts/scan_icons.py` to update catalog
+3. Optionally run `python scripts/annotate.py` for AI descriptions
+4. Commit changes including updated metadata
 
 ## License
 

@@ -1,0 +1,10 @@
+{
+  "name": "lingaro-icons",
+  "version": "0.1.0",
+  "description": "Search and download icons from the Lingaro Icons Catalog — Azure, GCP, Databricks, Microsoft Fabric, and Lingaro custom sets. Includes CLI, MCP tools, and setup skill.",
+  "author": {
+    "name": "Lingaro",
+    "url": "https://lingaro-icons-catalog.azurewebsites.net"
+  },
+  "keywords": ["icons", "azure", "gcp", "databricks", "fabric", "diagrams", "lingaro"]
+}

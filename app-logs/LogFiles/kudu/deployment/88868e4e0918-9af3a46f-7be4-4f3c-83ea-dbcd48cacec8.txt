@@ -1,0 +1,57 @@
+2026-03-07T18:45:58  Fetching changes.
+2026-03-07T18:45:58    Starting  LocalZipHandler
+2026-03-07T18:45:58    Cleaning up temp folders from previous zip deployments and extracting pushed zip file /tmp/zipdeploy/6caea73e-19e8-4a57-99e6-40c8898c5e26.zip (0.78 MB) to /tmp/zipdeploy/extracted
+2026-03-07T18:46:03  Updating submodules.
+2026-03-07T18:46:03  Preparing deployment for commit id 'dce283eb-7'.
+2026-03-07T18:46:04  PreDeployment: context.CleanOutputPath False
+2026-03-07T18:46:05  PreDeployment: context.OutputPath /home/site/wwwroot
+2026-03-07T18:46:05  Repository path is /tmp/zipdeploy/extracted
+2026-03-07T18:46:06  Running oryx build...
+2026-03-07T18:46:06    Command: oryx build /tmp/zipdeploy/extracted -o /home/site/wwwroot --platform python --platform-version 3.11 -p virtualenv_name=antenv --log-file /tmp/build-debug.log  -i /tmp/8de7c79c964a670 --compress-destination-dir | tee /tmp/oryx-build.log
+2026-03-07T18:46:18    Operation performed by Microsoft Oryx, https://github.com/Microsoft/Oryx
+2026-03-07T18:46:18    You can report issues at https://github.com/Microsoft/Oryx/issues
+2026-03-07T18:46:18    
+2026-03-07T18:46:18    Oryx Version: 0.2.20260204.1+0fdbe200b286be083841ff7fa201c6c2316dc6b9, Commit: 0fdbe200b286be083841ff7fa201c6c2316dc6b9, ReleaseTagName: 20260204.1
+2026-03-07T18:46:19    
+2026-03-07T18:46:19    Build Operation ID: 138f290549fde17d
+2026-03-07T18:46:19    Repository Commit : dce283eb-7719-4f76-b566-33435ae9b171
+2026-03-07T18:46:19    OS Type           : bullseye
+2026-03-07T18:46:19    Image Type        : githubactions
+2026-03-07T18:46:19    
+2026-03-07T18:46:20    Primary SDK Storage URL: https://oryx-cdn.microsoft.io
+2026-03-07T18:46:20    Backup SDK Storage URL: 
+2026-03-07T18:46:20    Detecting platforms...
+2026-03-07T18:46:20    External SDK provider is enabled.
+2026-03-07T18:46:20    Requesting metadata for platform python from external SDK provider
+2026-03-07T18:46:23    Requesting metadata for platform python from external SDK provider
+2026-03-07T18:46:26    Detected following platforms:
+2026-03-07T18:46:27      python: 3.11.14
+2026-03-07T18:46:27    Requesting metadata for platform python from external SDK provider
+2026-03-07T18:46:44    Version '3.11.14' of platform 'python' is not installed. Generating script to install it...
+2026-03-07T18:47:02    
+2026-03-07T18:47:03    Using intermediate directory '/tmp/8de7c79c964a670'.
+2026-03-07T18:47:03    
+2026-03-07T18:47:04    Copying files to the intermediate directory...
+2026-03-07T18:47:11    Copying files to intermediate directory done in 8 sec(s).
+2026-03-07T18:47:11    
+2026-03-07T18:47:11    Source directory     : /tmp/8de7c79c964a670
+2026-03-07T18:47:11    Destination directory: /home/site/wwwroot
+2026-03-07T18:47:12    
+2026-03-07T18:47:12    Installing platform...
+2026-03-07T18:47:12    
+2026-03-07T18:47:12    Downloading and extracting 'python' version '3.11.14' to '/tmp/oryx/platforms/python/3.11.14'...
+2026-03-07T18:47:13    Detected image debian flavor: bullseye.
+2026-03-07T18:47:13    Skipping download of python version 3.11.14 as it is available in external sdk provider cache...
+2026-03-07T18:47:13    Extracting contents...
+2026-03-07T18:47:59    Successfully extracted python version 3.11.14 from external sdk provider cache...
+2026-03-07T18:47:59    
+2026-03-07T18:47:59    image detector file exists, platform is python..
+2026-03-07T18:47:59    OS detector file exists, OS is bullseye..
+2026-03-07T18:48:00    Platform installation done in 48 sec(s).
+2026-03-07T18:48:00    Running build script snippets...
+2026-03-07T18:48:00    Python Version: /tmp/oryx/platforms/python/3.11.14/bin/python3.11
+2026-03-07T18:48:00    Creating directory for command manifest file if it does not exist
+2026-03-07T18:48:00    Removing existing manifest file
+2026-03-07T18:48:00    Python Virtual Environment: antenv
+2026-03-07T18:48:00    Creating virtual environment...
+2026-03-07T18:48:00    Executing: /tmp/oryx/platforms/python/3.11.14/bin/python3.11 -m venv antenv --copies --system-site-packages

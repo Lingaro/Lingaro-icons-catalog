@@ -1,0 +1,18 @@
+<step title="Incoming Request" date="2026-03-08T20:52:17.967" instance="2ebaea" url="/api/publish?type=zip&amp;async=True" method="POST" type="request" pid="773,1,38" Accept="*/*" Host="lingaro-icons-catalog.scm.azurewebsites.net" User-Agent="AZURECLI/2.83.0 (MSI)" Accept-Encoding="gzip, deflate" Authorization="Bea..." Cache-Control="no-cache" Content-Type="application/octet-stream" Cookie="ARRAffinity=2ebaea0b253f5165daf3ffe9d2db6809fcf8714ea592cf11b0c7e00709509b10; ARRAffinitySameSite=2ebaea0b253f5165daf3ffe9d2db6809fcf8714ea592cf11b0c7e00709509b10" Content-Length="31645813" x-ms-client-request-id="a99b7ef9-1b30-11f1-8b90-4c5f7092ddfc" x-ms-artifact-checksum="6a90f2416f601bb1562e254d2cd3466528fd20b2d8d810edb4185b9a37e711fe" X-ARR-LOG-ID="a99b7ef9-1b30-11f1-8b90-4c5f7092ddfc" CLIENT-IP="89.72.120.163:49692" X-SITE-DEPLOYMENT-ID="lingaro-icons-catalog" WAS-DEFAULT-HOSTNAME="lingaro-icons-catalog.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/publish?type=zip&amp;async=True" X-Client-IP="89.72.120.163" X-Client-Port="49692" >
+  <step title="Cleanup Xml Logs" date="2026-03-08T20:52:17.976" /><!-- duration: 40ms -->
+  <step title="OneDeploy" date="2026-03-08T20:52:18.222" >
+    <step title="None repository commit" date="2026-03-08T20:52:18.298" >
+      <step title="Commit id: 3bd1e3fc-6a67-4ba8-8d4a-572bf110ebec" date="2026-03-08T20:52:18.310" Message="N/A" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 10ms -->
+    </step><!-- duration: 40ms -->
+    <step title="Starting PushDeployAsync" date="2026-03-08T20:52:18.367" /><!-- duration: 18ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/adc5f6aa-efb1-4556-ba7d-e98613e54184.zip" date="2026-03-08T20:52:18.476" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/adc5f6aa-efb1-4556-ba7d-e98613e54184.zip" date="2026-03-08T20:52:18.516" /><!-- duration: 18ms -->
+    </step><!-- duration: 5201ms -->
+    <step title="Removing previous build artifact&apos;s manifest file" date="2026-03-08T20:52:23.733" >
+      <step title="Start deployment in the background" date="2026-03-08T20:52:23.785" >
+        <step title="Acquiring Deployment Lock" date="2026-03-08T20:52:23.990" /><!-- duration: 20ms -->
+        <step title="Acquired Deployment Lock" date="2026-03-08T20:52:24.125" /><!-- duration: 38ms -->
+      </step><!-- duration: 630ms -->
+    </step><!-- duration: 720ms -->
+    <step title="Outgoing response" date="2026-03-08T20:52:24.504" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 10ms -->
+  </step><!-- duration: 6302ms -->

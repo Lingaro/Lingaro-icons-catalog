@@ -1,0 +1,45 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgDataBarVerticalPhone16Filled = function SvgDataBarVerticalPhone16Filled(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    d: "M14.25 7c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 14.25 16h-2.5A1.75 1.75 0 0 1 10 14.25v-5.5c0-.966.784-1.75 1.75-1.75zm-1.75 6a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z",
+    clipRule: "evenodd"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M3 7a2 2 0 0 1 2 2v4a2 2 0 1 1-4 0V9a2 2 0 0 1 2-2m5-6a2 2 0 0 1 2 2v3.628c-.61.504-1 1.268-1 2.122v5.5q.001.233.04.455A2 2 0 0 1 8 15a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgDataBarVerticalPhone16Filled);
+
+export { ForwardRef as default };

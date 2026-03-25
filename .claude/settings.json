@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "excalidraw": {
+      "command": "node",
+      "args": [
+        "/path/to/excalidraw-mcp-app/dist/index.js",
+        "--stdio"
+      ]
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(sqlite3 data/catalog.db \".schema collections\")"
+    ]
+  }
+}

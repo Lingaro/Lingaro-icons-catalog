@@ -1,0 +1,45 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgGaugeKql24Regular = function SvgGaugeKql24Regular(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    d: "M20.375 13.458a8.5 8.5 0 1 0-7.477 6.995 2.25 2.25 0 0 0 .732.738 2.2 2.2 0 0 0-.413.736A10 10 0 0 1 12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10q0 .737-.104 1.446l-1.52.012Z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M7.934 16.066a.75.75 0 1 1-1.06 1.06 7.25 7.25 0 0 1 6.798-12.182.75.75 0 1 1-.344 1.46 5.75 5.75 0 0 0-5.393 9.661Zm9.954-6.925a.75.75 0 0 1 .955.46 7.3 7.3 0 0 1 .258 3.866l-1.543.012a5.8 5.8 0 0 0-.13-3.382.75.75 0 0 1 .46-.956m4.66 5.799a.5.5 0 0 1 .504.505l-.05 6.32a.5.5 0 0 1-.853.35l-3.06-3.061h-.002l-1.06-1.06-.883-.885-.001.001-1.061-1.06v-.001l-.205-.206a.5.5 0 0 1 .35-.854l6.32-.048Zm-7.756 5.09.028.001a.75.75 0 0 0 .533-.22l.707-.706a.75.75 0 0 0-1.061-1.061l-.707.707a.75.75 0 0 0 .5 1.28Zm.808 1.302-.003.002 1.345-1.346a.75.75 0 0 1 .53-.22.75.75 0 0 1 .533 1.28l-2.121 2.122a.75.75 0 0 1-1.061-1.06z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M15.88 6.667a.625.625 0 0 1 .961.761l-.13.25a355 355 0 0 1-1.415 2.713 155 155 0 0 1-1.156 2.157c-.171.31-.326.586-.452.803a5 5 0 0 1-.32.5 1.875 1.875 0 0 1-2.94-2.327c.086-.109.244-.265.413-.425.182-.173.414-.387.678-.625.527-.476 1.187-1.058 1.832-1.62a375 375 0 0 1 2.314-2.003zm4.068 15.266a.75.75 0 0 1 0 1.06l-.707.708a.75.75 0 0 1-1.06-1.06l.707-.708a.75.75 0 0 1 1.06 0"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgGaugeKql24Regular);
+
+export { ForwardRef as default };

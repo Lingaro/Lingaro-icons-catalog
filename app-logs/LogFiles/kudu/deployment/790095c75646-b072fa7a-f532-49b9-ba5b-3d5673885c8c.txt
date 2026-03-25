@@ -1,0 +1,162 @@
+2026-03-07T22:13:43  Fetching changes.
+2026-03-07T22:13:43    Starting  LocalZipHandler
+2026-03-07T22:13:44    Cleaning up temp folders from previous zip deployments and extracting pushed zip file /tmp/zipdeploy/61bb0a68-c46b-4ac7-849f-c5e8b547ea9c.zip (0.78 MB) to /tmp/zipdeploy/extracted
+2026-03-07T22:13:47  Updating submodules.
+2026-03-07T22:13:47  Preparing deployment for commit id '76b7419b-6'.
+2026-03-07T22:13:48  PreDeployment: context.CleanOutputPath False
+2026-03-07T22:13:48  PreDeployment: context.OutputPath /home/site/wwwroot
+2026-03-07T22:13:48  Repository path is /tmp/zipdeploy/extracted
+2026-03-07T22:13:48  Running oryx build...
+2026-03-07T22:13:48    Command: oryx build /tmp/zipdeploy/extracted -o /home/site/wwwroot --platform python --platform-version 3.11 -p virtualenv_name=antenv --log-file /tmp/build-debug.log  -i /tmp/8de7c96ce491dfc --compress-destination-dir | tee /tmp/oryx-build.log
+2026-03-07T22:13:51    Operation performed by Microsoft Oryx, https://github.com/Microsoft/Oryx
+2026-03-07T22:13:51    You can report issues at https://github.com/Microsoft/Oryx/issues
+2026-03-07T22:13:51    
+2026-03-07T22:13:51    Oryx Version: 0.2.20260204.1+0fdbe200b286be083841ff7fa201c6c2316dc6b9, Commit: 0fdbe200b286be083841ff7fa201c6c2316dc6b9, ReleaseTagName: 20260204.1
+2026-03-07T22:13:51    
+2026-03-07T22:13:51    Build Operation ID: e1d76317fb015723
+2026-03-07T22:13:51    Repository Commit : 76b7419b-6631-488b-8e9c-217b2236171d
+2026-03-07T22:13:52    OS Type           : bullseye
+2026-03-07T22:13:52    Image Type        : githubactions
+2026-03-07T22:13:52    
+2026-03-07T22:13:52    Primary SDK Storage URL: https://oryx-cdn.microsoft.io
+2026-03-07T22:13:52    Backup SDK Storage URL: 
+2026-03-07T22:13:52    Detecting platforms...
+2026-03-07T22:13:52    External SDK provider is enabled.
+2026-03-07T22:13:52    Requesting metadata for platform python from external SDK provider
+2026-03-07T22:13:53    Requesting metadata for platform python from external SDK provider
+2026-03-07T22:13:54    Detected following platforms:
+2026-03-07T22:13:54      python: 3.11.14
+2026-03-07T22:13:54    Requesting metadata for platform python from external SDK provider
+2026-03-07T22:13:58    Version '3.11.14' of platform 'python' is not installed. Generating script to install it...
+2026-03-07T22:13:58    
+2026-03-07T22:13:59    Using intermediate directory '/tmp/8de7c96ce491dfc'.
+2026-03-07T22:13:59    
+2026-03-07T22:13:59    Copying files to the intermediate directory...
+2026-03-07T22:13:59    Copying files to intermediate directory done in 1 sec(s).
+2026-03-07T22:13:59    
+2026-03-07T22:13:59    Source directory     : /tmp/8de7c96ce491dfc
+2026-03-07T22:13:59    Destination directory: /home/site/wwwroot
+2026-03-07T22:13:59    
+2026-03-07T22:13:59    Installing platform...
+2026-03-07T22:13:59    
+2026-03-07T22:13:59    Downloading and extracting 'python' version '3.11.14' to '/tmp/oryx/platforms/python/3.11.14'...
+2026-03-07T22:13:59    Detected image debian flavor: bullseye.
+2026-03-07T22:13:59    Skipping download of python version 3.11.14 as it is available in external sdk provider cache...
+2026-03-07T22:13:59    Extracting contents...
+2026-03-07T22:14:22    Successfully extracted python version 3.11.14 from external sdk provider cache...
+2026-03-07T22:14:22    
+2026-03-07T22:14:22    image detector file exists, platform is python..
+2026-03-07T22:14:22    OS detector file exists, OS is bullseye..
+2026-03-07T22:14:22    Platform installation done in 23 sec(s).
+2026-03-07T22:14:23    Running build script snippets...
+2026-03-07T22:14:23    Python Version: /tmp/oryx/platforms/python/3.11.14/bin/python3.11
+2026-03-07T22:14:23    Creating directory for command manifest file if it does not exist
+2026-03-07T22:14:23    Removing existing manifest file
+2026-03-07T22:14:23    Python Virtual Environment: antenv
+2026-03-07T22:14:23    Creating virtual environment...
+2026-03-07T22:14:23    Executing: /tmp/oryx/platforms/python/3.11.14/bin/python3.11 -m venv antenv --copies --system-site-packages
+2026-03-07T22:14:44    Activating virtual environment...
+2026-03-07T22:14:45    Fast build is enabled
+2026-03-07T22:14:45    Installing uv...
+2026-03-07T22:14:48    Collecting uv
+2026-03-07T22:14:48      Using cached uv-0.10.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+2026-03-07T22:14:48    Using cached uv-0.10.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (23.4 MB)
+2026-03-07T22:14:49    Installing collected packages: uv
+2026-03-07T22:14:51    Successfully installed uv-0.10.9
+2026-03-07T22:14:52    
+2026-03-07T22:14:52    [notice] A new release of pip is available: 24.0 -> 26.0.1
+2026-03-07T22:14:52    [notice] To update, run: pip install --upgrade pip
+2026-03-07T22:14:53    Running uv pip install...
+2026-03-07T22:15:23    Using Python 3.11.14 environment at: antenv
+2026-03-07T22:15:23    Resolved 48 packages in 1.49s
+2026-03-07T22:15:23    Downloading openai (1.1MiB)
+2026-03-07T22:15:23    Downloading pydantic-core (2.0MiB)
+2026-03-07T22:15:23    Downloading uvloop (3.6MiB)
+2026-03-07T22:15:23    Downloading cryptography (4.3MiB)
+2026-03-07T22:15:24    Downloading pillow (6.7MiB)
+2026-03-07T22:15:24    Downloading numpy (16.1MiB)
+2026-03-07T22:15:24     Downloaded pydantic-core
+2026-03-07T22:15:24     Downloaded uvloop
+2026-03-07T22:15:24     Downloaded cryptography
+2026-03-07T22:15:24     Downloaded pillow
+2026-03-07T22:15:24     Downloaded openai
+2026-03-07T22:15:24     Downloaded numpy
+2026-03-07T22:15:24    Prepared 48 packages in 4.98s
+2026-03-07T22:15:24    Installed 48 packages in 519ms
+2026-03-07T22:15:24    Bytecode compiled 3486 files in 22.95s
+2026-03-07T22:15:24     + annotated-doc==0.0.4
+2026-03-07T22:15:24     + annotated-types==0.7.0
+2026-03-07T22:15:24     + anyio==4.12.1
+2026-03-07T22:15:24     + azure-core==1.38.2
+2026-03-07T22:15:24     + azure-storage-blob==12.28.0
+2026-03-07T22:15:25     + cairocffi==1.7.1
+2026-03-07T22:15:25     + cairosvg==2.8.2
+2026-03-07T22:15:25     + certifi==2026.2.25
+2026-03-07T22:15:25     + cffi==2.0.0
+2026-03-07T22:15:25     + charset-normalizer==3.4.5
+2026-03-07T22:15:25     + click==8.3.1
+2026-03-07T22:15:25     + cryptography==46.0.5
+2026-03-07T22:15:25     + cssselect2==0.9.0
+2026-03-07T22:15:25     + defusedxml==0.7.1
+2026-03-07T22:15:25     + distro==1.9.0
+2026-03-07T22:15:25     + fastapi==0.135.1
+2026-03-07T22:15:25     + gunicorn==25.1.0
+2026-03-07T22:15:25     + h11==0.16.0
+2026-03-07T22:15:25     + httpcore==1.0.9
+2026-03-07T22:15:25     + httptools==0.7.1
+2026-03-07T22:15:26     + httpx==0.28.1
+2026-03-07T22:15:26     + idna==3.11
+2026-03-07T22:15:26     + isodate==0.7.2
+2026-03-07T22:15:26     + jiter==0.13.0
+2026-03-07T22:15:26     + numpy==2.4.2
+2026-03-07T22:15:26     + openai==2.26.0
+2026-03-07T22:15:26     + packaging==26.0
+2026-03-07T22:15:26     + pillow==12.1.1
+2026-03-07T22:15:26     + pycparser==3.0
+2026-03-07T22:15:26     + pydantic==2.12.5
+2026-03-07T22:15:26     + pydantic-core==2.41.5
+2026-03-07T22:15:26     + python-dotenv==1.2.2
+2026-03-07T22:15:26     + python-multipart==0.0.22
+2026-03-07T22:15:26     + pyyaml==6.0.3
+2026-03-07T22:15:26     + requests==2.32.5
+2026-03-07T22:15:26     + sniffio==1.3.1
+2026-03-07T22:15:27     + sqlite-vec==0.1.6
+2026-03-07T22:15:27     + starlette==0.52.1
+2026-03-07T22:15:27     + tinycss2==1.5.1
+2026-03-07T22:15:27     + tqdm==4.67.3
+2026-03-07T22:15:27     + typing-extensions==4.15.0
+2026-03-07T22:15:27     + typing-inspection==0.4.2
+2026-03-07T22:15:27     + urllib3==2.6.3
+2026-03-07T22:15:27     + uvicorn==0.41.0
+2026-03-07T22:15:27     + uvloop==0.22.1
+2026-03-07T22:15:27     + watchfiles==1.1.1
+2026-03-07T22:15:27     + webencodings==0.5.1
+2026-03-07T22:15:27     + websockets==16.0
+2026-03-07T22:15:27    uv pip install done in 39 sec(s).
+2026-03-07T22:15:27    Not a vso image, so not writing build commands
+2026-03-07T22:15:27    Build script snippets done in 60 sec(s).
+2026-03-07T22:15:27    Preparing output...
+2026-03-07T22:15:28    Compressing source directory directly to destination (optimized path)...
+2026-03-07T22:15:28    Using zstd for compression
+2026-03-07T22:15:41    Copied the compressed output to '/home/site/wwwroot'
+2026-03-07T22:15:41    Direct compression with zstd done in 18 sec(s).
+2026-03-07T22:15:41    
+2026-03-07T22:15:41    Removing existing manifest file
+2026-03-07T22:15:41    Creating a manifest file...
+2026-03-07T22:15:41    Manifest file created.
+2026-03-07T22:15:41    Copying .ostype to manifest output directory.
+2026-03-07T22:15:41    
+2026-03-07T22:15:41    Total execution done in 103 sec(s).
+2026-03-07T22:15:42  Running post deployment command(s)...
+2026-03-07T22:15:42  
+2026-03-07T22:15:42  Generating summary of Oryx build
+2026-03-07T22:15:42  Parsing the build logs
+2026-03-07T22:15:42  Found 0 issue(s)
+2026-03-07T22:15:42  
+2026-03-07T22:15:43  Build Summary :
+2026-03-07T22:15:43  ===============
+2026-03-07T22:15:43  Errors (0)
+2026-03-07T22:15:43  Warnings (0)
+2026-03-07T22:15:43  
+2026-03-07T22:15:43  Triggering container recycle for OneDeploy by adding/updating restartTrigger.txt to the site root path
+2026-03-07T22:15:43  Deployment successful. deployer = OneDeploy deploymentPath = OneDeploy

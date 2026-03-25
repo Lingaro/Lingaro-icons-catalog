@@ -1,0 +1,2 @@
+[console_scripts]
+cli-anything-lingaro-catalog = cli_anything.lingaro_catalog.lingaro_catalog_cli:main

@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+
+var __assign = window && window.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = window && window.__rest || function (s, e) {
+  var t = {};
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+  }
+  return t;
+};
+var SvgDataScience48Filled = function SvgDataScience48Filled(_a, ref) {
+  var title = _a.title,
+    titleId = _a.titleId,
+    props = __rest(_a, ["title", "titleId"]);
+  return /*#__PURE__*/React.createElement("svg", __assign({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "currentColor",
+    role: "img",
+    focusable: "false",
+    ref: ref,
+    "aria-labelledby": titleId
+  }, props), title ? /*#__PURE__*/React.createElement("title", {
+    id: titleId
+  }, title) : null, /*#__PURE__*/React.createElement("path", {
+    fillRule: "evenodd",
+    d: "m21.433 42.24-.652 1.073-11.84-4.821a1.4 1.4 0 0 1-.441-.302c-.647-.615-.703-1.673-.131-2.368l8.688-9.556 6.071-6.677q.235-.285.38-.632a2.6 2.6 0 0 0 .201-1.02c0-1.018-.562-1.844-1.358-2.287L9.779 9.527 23.105 4.16c.262-.1.543-.161.834-.161s.571.06.834.171l14.047 5.85c.572.252.965.856.965 1.551 0 .323-.084.625-.234.877l-7.703 12.666zm-5.748-18.18 4.375-4.813-.005-.023a1.32 1.32 0 0 0 .344-.892c0-.529-.309-.985-.754-1.194l-.006-.028L9.1 11.976a1.77 1.77 0 0 0 .078 1.618zm8.655 18.21 9.202-15.13 6.552 7.84c.58.7.522 1.763-.133 2.38a1.5 1.5 0 0 1-.446.304s-13.795 6.338-14.143 6.338-.593-.152-.81-.39a1.25 1.25 0 0 1-.217-1.333l-.005-.008Z",
+    clipRule: "evenodd"
+  }));
+};
+var ForwardRef = /*#__PURE__*/forwardRef(SvgDataScience48Filled);
+
+export { ForwardRef as default };

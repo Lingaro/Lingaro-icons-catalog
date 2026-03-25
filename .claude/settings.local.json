@@ -1,6 +1,22 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(az account:*)",
+      "Bash(az webapp:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(curl:*)",
+      "Read(//c/tmp/**)",
+      "Bash(unzip -o \"C:/Users/PIOTR~1.PAL/AppData/Local/Temp/webapp-logs.zip\" -d webapp-logs)",
+      "Bash(unzip:*)",
+      "Bash(rm:*)",
+      "Bash(python -c \"import json; data=json.load\\(open\\(''.claude-plugin/plugin.json''\\)\\); print\\(''JSON valid''\\); print\\(data\\)\")",
+      "Bash(python -c \"import json; data=json.load\\(open\\(''.mcp.json''\\)\\); print\\(''JSON valid''\\); print\\(json.dumps\\(data, indent=2\\)\\)\")",
+      "Bash(head -20 grep -n \"collections\\\\|categories\" /c/Users/piotr.palka/workspace/lingaro/Lingaro-icons-catalog/agent-harness/cli_anything/lingaro_catalog/core/client.py)",
+      "Bash(grep -rn collections /c/Users/piotr.palka/workspace/lingaro/Lingaro-icons-catalog/api/ --include=*.py)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "Azure MCP Server"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
