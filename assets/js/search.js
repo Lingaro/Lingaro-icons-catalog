@@ -90,7 +90,7 @@
   let browseListenersAttached = false; // prevent duplicate event listeners
 
   // DOM elements (initialized after DOM ready)
-  let searchInput, clearButton, categoryFilter, resultsCount, iconsGrid;
+  let searchInput, clearButton, categoryFilter, collectionTagsContainer, resultsCount, iconsGrid;
 
   // Initialize
   document.addEventListener('DOMContentLoaded', init);
@@ -201,7 +201,7 @@
       .map(c => {
         const displayName = formatCollectionName(c.name);
         const coverUrl = c.cover_icon_id
-          ? `${apiBase}/api/icons/${c.cover_icon_id}/file`
+          ? `${apiBase}/api/icons/${c.cover_icon_id}/file?v=2`
           : '';
         const cats = c.categories.slice(0, 5)
           .map(cat => `<span class="collection-card-cat">${cat}</span>`)
@@ -315,6 +315,7 @@
     searchInput = document.getElementById('search-input');
     clearButton = document.getElementById('clear-search');
     categoryFilter = document.getElementById('category-filter');
+    collectionTagsContainer = document.getElementById('collection-tags');
     resultsCount = document.getElementById('results-count');
     iconsGrid = document.querySelector('#browse-view .icons-grid');
 
@@ -411,6 +412,10 @@
       categoryFilter.addEventListener('change', handleFilterChange);
     }
 
+    if (collectionTagsContainer) {
+      collectionTagsContainer.addEventListener('click', handleCollectionTagClick);
+    }
+
     // Delegate click events for icon cards
     if (iconsGrid) {
       iconsGrid.addEventListener('click', handleIconAction);
@@ -433,6 +438,18 @@
     try {
       if (!iconsData) {
         return;
+      }
+
+      // Populate collection tags from collectionsData
+      if (collectionTagsContainer && collectionsData) {
+        const allTag = `<span class="filter-tag${!currentCollection ? ' active' : ''}" data-collection="">All</span>`;
+        const tags = collectionsData
+          .filter(c => c.name !== 'test_set')
+          .map(c => {
+            const active = currentCollection === c.name ? ' active' : '';
+            return `<span class="filter-tag${active}" data-collection="${c.name}">${formatCollectionName(c.name)}</span>`;
+          }).join('');
+        collectionTagsContainer.innerHTML = allTag + tags;
       }
 
       // Populate category dropdown
@@ -471,6 +488,50 @@
     }
   }
 
+  // Handle collection tag click
+  function handleCollectionTagClick(e) {
+    const tag = e.target.closest('.filter-tag');
+    if (!tag) return;
+    const selected = tag.dataset.collection || '';
+    currentCollection = selected || null;
+    selectedCollections = new Set();
+    if (selected) {
+      selectedCollections.add(selected);
+    }
+    // Update active state on tags
+    collectionTagsContainer.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+    tag.classList.add('active');
+    // Update title
+    const title = document.getElementById('browse-collection-title');
+    if (title) {
+      title.textContent = selected ? formatCollectionName(selected) : 'All Collections';
+    }
+    // Reload icons for the new collection scope (browse data)
+    loadIconsData().then(() => {
+      populateCategoryFilter();
+      if (currentQuery) {
+        serverSearch(currentQuery);
+      } else {
+        applyFilters();
+      }
+    });
+  }
+
+  // Refresh only category dropdown (after collection change)
+  function populateCategoryFilter() {
+    if (categoryFilter && iconsData && iconsData.categories) {
+      while (categoryFilter.options.length > 1) {
+        categoryFilter.remove(1);
+      }
+      iconsData.categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        categoryFilter.appendChild(option);
+      });
+    }
+  }
+
   // Handle search input
   function handleSearch() {
     currentQuery = searchInput ? searchInput.value.trim().toLowerCase() : '';
@@ -485,10 +546,8 @@
     const apiBase = window.API_URL || '';
     const params = new URLSearchParams({ q: query, limit: '200' });
     if (currentCategory) params.set('category', currentCategory);
-    // Include selected collections as set filter (only if exactly one selected)
-    if (selectedCollections.size === 1) {
-      params.set('set', [...selectedCollections][0]);
-    }
+    // Apply collection filter if user explicitly selected one from tags
+    if (currentCollection) params.set('set', currentCollection);
     try {
       const res = await authFetch(`${apiBase}/api/search?${params}`);
       if (!res.ok) {
@@ -502,13 +561,7 @@
         set: i.set || i.set_name,
         format: (i.filename || '').endsWith('.png') ? 'png' : 'svg',
       }));
-      // If multiple collections selected, filter client-side
-      if (selectedCollections.size > 1) {
-        const filtered = icons.filter(icon => selectedCollections.has(icon.set));
-        renderIcons(filtered);
-      } else {
-        renderIcons(icons);
-      }
+      renderIcons(icons);
     } catch (err) {
       console.warn('Server search failed, using local filter:', err);
       applyFilters();
