@@ -22,10 +22,7 @@ async def search_icons(
     db=Depends(get_database),
 ):
     search = SearchService(db)
-    if semantic:
-        results = search.semantic_search(q, category, set, limit)
-    else:
-        results = search.text_search(q, category, set, limit)
+    results = search.search(q, category, set, limit)
     return SearchResponse(
         query=q, total=len(results),
         icons=[IconResponse(**r) for r in results],
@@ -36,10 +33,7 @@ async def search_icons(
 @router.post("/search")
 async def search_icons_post(request: SearchRequest, user=Depends(require_auth), db=Depends(get_database)):
     search = SearchService(db)
-    if request.semantic:
-        results = search.semantic_search(request.query, request.category, request.set, request.limit)
-    else:
-        results = search.text_search(request.query, request.category, request.set, request.limit)
+    results = search.search(request.query, request.category, request.set, request.limit)
     return SearchResponse(
         query=request.query, total=len(results),
         icons=[IconResponse(**r) for r in results],

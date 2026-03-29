@@ -1,18 +1,12 @@
-"""Search service backed by SQLite (text search) and sqlite-vec (semantic search)."""
+"""Search service backed by SQLite FTS5 full-text search."""
 
 import json
 import logging
-import os
+import re
 import sqlite3
 from typing import Optional
 
-import numpy as np
-from openai import OpenAI
-
 logger = logging.getLogger(__name__)
-
-EMBEDDING_MODEL = "text-embedding-3-small"
-EMBEDDING_DIMENSIONS = 256
 
 
 def _deserialize_icon(row: dict) -> dict:
@@ -24,25 +18,83 @@ def _deserialize_icon(row: dict) -> dict:
             icon[field] = json.loads(val)
     if "set_name" in icon and "set" not in icon:
         icon["set"] = icon.pop("set_name")
+    icon.pop("rank", None)
     return icon
 
 
+def _fts5_query(query: str) -> str:
+    """Convert user query to FTS5 query syntax.
+
+    - Single word: use prefix match (e.g. 'data' -> 'data*')
+    - Multiple words: each word as prefix, combined with AND (implicit)
+    - Strips special FTS5 characters to prevent syntax errors
+    """
+    # Remove FTS5 special chars
+    cleaned = re.sub(r'[^\w\s]', ' ', query)
+    words = cleaned.split()
+    if not words:
+        return '""'
+    # Each word gets prefix matching
+    terms = [f'"{w}"*' for w in words]
+    return " ".join(terms)
+
+
 class SearchService:
-    """Search engine with text and optional semantic search."""
+    """Search engine using SQLite FTS5 for full-text search."""
 
     def __init__(self, conn: sqlite3.Connection):
         self.conn = conn
-        self._openai_client: Optional[OpenAI] = None
 
-    @property
-    def openai_client(self) -> Optional[OpenAI]:
-        if self._openai_client is None:
-            api_key = os.getenv("OPENAI_API_KEY")
-            if api_key:
-                self._openai_client = OpenAI(api_key=api_key)
-        return self._openai_client
+    def search(
+        self,
+        query: str,
+        category: Optional[str] = None,
+        set_name: Optional[str] = None,
+        limit: int = 50,
+    ) -> list[dict]:
+        """Full-text search using FTS5 with BM25 ranking.
 
-    def text_search(self, query: str, category: Optional[str] = None, set_name: Optional[str] = None, limit: int = 50) -> list[dict]:
+        Weights: name(10) > description(5) > tags(3) > use_cases(2) > category(1)
+        """
+        fts_query = _fts5_query(query)
+
+        sql = """
+            SELECT i.*, bm25(icons_fts, 10.0, 5.0, 3.0, 2.0, 1.0) AS rank
+            FROM icons_fts f
+            JOIN icons i ON i.rowid = f.rowid
+            WHERE icons_fts MATCH ?
+              AND i.status = 'ready'
+        """
+        params: list = [fts_query]
+
+        if category:
+            sql += " AND i.category = ?"
+            params.append(category)
+        if set_name:
+            sql += " AND i.set_name = ?"
+            params.append(set_name)
+
+        sql += " ORDER BY rank LIMIT ?"
+        params.append(limit)
+
+        try:
+            cursor = self.conn.execute(sql, params)
+            rows = cursor.fetchall()
+        except Exception as e:
+            logger.warning("FTS5 search failed, falling back to text search: %s", e)
+            return self.text_search(query, category, set_name, limit)
+
+        results = []
+        for row in rows:
+            icon = _deserialize_icon(dict(row))
+            # BM25 returns negative scores (lower = better match), normalize to 0-1
+            icon["score"] = round(max(0, 1.0 + row["rank"] / 10.0), 4)
+            results.append(icon)
+        return results
+
+    # Backward-compatible aliases
+    def text_search(self, query: str, category=None, set_name=None, limit=50):
+        """Keyword fallback if FTS5 is unavailable."""
         query_lower = query.lower()
         query_words = query_lower.split()
         sql = "SELECT * FROM icons WHERE status = 'ready'"
@@ -59,55 +111,14 @@ class SearchService:
         for icon in rows:
             score = self._text_score(icon, query_lower, query_words)
             if score > 0:
-                icon["score"] = round(score, 4)
+                icon["score"] = round(score / 100.0, 4)
                 scored.append(icon)
         scored.sort(key=lambda x: x.get("score", 0), reverse=True)
         return scored[:limit]
 
-    def semantic_search(self, query: str, category: Optional[str] = None, set_name: Optional[str] = None, limit: int = 50) -> list[dict]:
-        client = self.openai_client
-        if not client:
-            return self.text_search(query, category, set_name, limit)
-        try:
-            response = client.embeddings.create(model=EMBEDDING_MODEL, input=query, dimensions=EMBEDDING_DIMENSIONS)
-            query_vec = np.array(response.data[0].embedding, dtype=np.float32)
-            norm = np.linalg.norm(query_vec)
-            if norm > 0:
-                query_vec = query_vec / norm
-        except Exception:
-            return self.text_search(query, category, set_name, limit)
-        try:
-            return self._vec_search(query, query_vec, category, set_name, limit)
-        except Exception:
-            return self._numpy_search(query, query_vec, category, set_name, limit)
-
-    def _vec_search(self, query, query_vec, category, set_name, limit):
-        cursor = self.conn.execute(
-            "SELECT icon_id, distance FROM icon_embeddings WHERE embedding MATCH ? ORDER BY distance LIMIT ?",
-            (query_vec.tobytes(), limit * 3),
-        )
-        id_scores = {row[0]: 1.0 - row[1] for row in cursor.fetchall()}
-        results = []
-        for icon_id, sim_score in id_scores.items():
-            icon = self.get_icon_by_id(icon_id)
-            if not icon:
-                continue
-            if category and icon.get("category") != category:
-                continue
-            if set_name and icon.get("set") != set_name:
-                continue
-            query_lower = query.lower()
-            if icon["name"].lower() == query_lower:
-                sim_score += 0.3
-            elif query_lower in icon["name"].lower():
-                sim_score += 0.15
-            icon["score"] = round(sim_score, 4)
-            results.append(icon)
-        results.sort(key=lambda x: x.get("score", 0), reverse=True)
-        return results[:limit]
-
-    def _numpy_search(self, query, query_vec, category, set_name, limit):
-        return self.text_search(query, category, set_name, limit)
+    def semantic_search(self, query, category=None, set_name=None, limit=50):
+        """Alias for search() — FTS5 replaces embedding-based semantic search."""
+        return self.search(query, category, set_name, limit)
 
     def _text_score(self, icon, query_lower, query_words):
         score = 0.0
@@ -193,22 +204,19 @@ class SearchService:
             })
         return results
 
-    # Explicit cover icon overrides per collection (icon ID)
     COVER_OVERRIDES = {
-        "databricks": "databricks_databricks_11_databricks",
+        "databricks": "databricks",
         "Apache": "apache_apache_apache_logo",
         "Data & Analytics": "lingaro_set4_data_analysis_charts_chart_2",
         "ML & AI": "lingaro_set4_data_analysis_charts_ai_2",
         "DevOps & Infra": "devops_&_infra_devops_&_infra_devops",
-        "Microsoft Fabric": "microsoft_fabric_services_fabric_20_color",
+        "Microsoft Fabric": "fabric_services_fabric",
         "Azure": "azure_other_azure_icon",
         "Google Cloud": "google_cloud_google_cloud_google_cloud_logo",
         "lingaro_set4": "lingaro_set4_branding_lingaro_logo_small_transparent",
     }
 
     def _find_cover_icon(self, set_name):
-        """Find best cover icon for a collection: explicit override, name match, or first icon."""
-        # Check explicit overrides first
         if set_name in self.COVER_OVERRIDES:
             override_id = self.COVER_OVERRIDES[set_name]
             row = self.conn.execute(
@@ -218,12 +226,9 @@ class SearchService:
             if row:
                 return row[0]
             else:
-                # Log warning but continue to fallback logic
                 logger.warning(
                     f"Cover override for '{set_name}' points to non-existent icon: {override_id}"
                 )
-
-        # Fallback: try name match
         slug = set_name.lower().replace(" ", "").replace("_", "")
         cursor = self.conn.execute(
             "SELECT id, name FROM icons WHERE set_name = ? AND status = 'ready' ORDER BY name",

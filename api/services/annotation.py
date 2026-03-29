@@ -14,7 +14,7 @@ DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 try:
     import cairosvg
     HAS_CAIRO = True
-except (ImportError, OSError):
+except (ImportError, OSError, AttributeError):
     HAS_CAIRO = False
 
 try:

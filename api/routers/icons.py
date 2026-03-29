@@ -73,7 +73,7 @@ def _make_icon_id(set_name: str, category: str, name: str) -> str:
 async def list_icons(
     category: Optional[str] = None,
     set: Optional[str] = None,
-    limit: int = Query(100, ge=1, le=500),
+    limit: int = Query(100, ge=1, le=2000),
     offset: int = Query(0, ge=0),
     user=Depends(require_auth),
     db=Depends(get_database),

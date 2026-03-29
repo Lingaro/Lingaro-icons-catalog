@@ -351,7 +351,7 @@
       // Try loading from API first
       try {
         const [iconsRes, catsRes] = await Promise.all([
-          authFetch(`${apiBase}/api/icons?limit=500${currentCollection ? '&set=' + encodeURIComponent(currentCollection) : ''}`),
+          authFetch(`${apiBase}/api/icons?limit=2000${currentCollection ? '&set=' + encodeURIComponent(currentCollection) : ''}`),
           authFetch(`${apiBase}/api/categories`),
         ]);
 
@@ -474,7 +474,45 @@
   // Handle search input
   function handleSearch() {
     currentQuery = searchInput ? searchInput.value.trim().toLowerCase() : '';
-    applyFilters();
+    if (currentQuery) {
+      serverSearch(currentQuery);
+    } else {
+      applyFilters();
+    }
+  }
+
+  async function serverSearch(query) {
+    const apiBase = window.API_URL || '';
+    const params = new URLSearchParams({ q: query, limit: '200' });
+    if (currentCategory) params.set('category', currentCategory);
+    // Include selected collections as set filter (only if exactly one selected)
+    if (selectedCollections.size === 1) {
+      params.set('set', [...selectedCollections][0]);
+    }
+    try {
+      const res = await authFetch(`${apiBase}/api/search?${params}`);
+      if (!res.ok) {
+        // Fall back to local filtering if API fails
+        applyFilters();
+        return;
+      }
+      const data = await res.json();
+      const icons = (data.icons || []).map(i => ({
+        ...i,
+        set: i.set || i.set_name,
+        format: (i.filename || '').endsWith('.png') ? 'png' : 'svg',
+      }));
+      // If multiple collections selected, filter client-side
+      if (selectedCollections.size > 1) {
+        const filtered = icons.filter(icon => selectedCollections.has(icon.set));
+        renderIcons(filtered);
+      } else {
+        renderIcons(icons);
+      }
+    } catch (err) {
+      console.warn('Server search failed, using local filter:', err);
+      applyFilters();
+    }
   }
 
   // Handle filter changes
@@ -483,33 +521,27 @@
     applyFilters();
   }
 
-  // Apply all filters
+  // Apply all filters (browse mode — no query, local filtering only)
   function applyFilters() {
     if (!iconsData) return;
 
+    // If there's a search query, delegate to server search
+    if (currentQuery) {
+      serverSearch(currentQuery);
+      return;
+    }
+
     filteredIcons = iconsData.icons.filter(icon => {
-      // Collection (set) filter - must be in selected collections
+      // Collection (set) filter
       if (selectedCollections.size > 0 && !selectedCollections.has(icon.set)) {
         return false;
       }
-
       // Category filter
       if (currentCategory && icon.category !== currentCategory) {
         return false;
       }
-
-      // Search query
-      if (currentQuery) {
-        return searchIcon(icon, currentQuery);
-      }
-
       return true;
     });
-
-    // If we have embeddings, sort by relevance
-    if (currentQuery && iconsData.queryEmbedding) {
-      filteredIcons = semanticSearch(filteredIcons, currentQuery);
-    }
 
     renderIcons(filteredIcons);
   }
@@ -1170,6 +1202,14 @@
           const doc = parser.parseFromString(svgText, 'image/svg+xml');
           const svg = doc.querySelector('svg');
           if (svg) {
+            // If SVG has no viewBox, create one from width/height so it scales properly
+            if (!svg.getAttribute('viewBox')) {
+              const w = svg.getAttribute('width');
+              const h = svg.getAttribute('height');
+              if (w && h) {
+                svg.setAttribute('viewBox', `0 0 ${parseFloat(w)} ${parseFloat(h)}`);
+              }
+            }
             svg.removeAttribute('width');
             svg.removeAttribute('height');
             svg.style.width = '100%';

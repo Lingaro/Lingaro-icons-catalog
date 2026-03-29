@@ -1,4 +1,10 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(sqlite3 data/catalog.db \".schema collections\")",
+      "Bash(python app.py)"
+    ]
+  },
   "mcpServers": {
     "excalidraw": {
       "command": "node",
@@ -7,10 +13,5 @@
         "--stdio"
       ]
     }
-  },
-  "permissions": {
-    "allow": [
-      "Bash(sqlite3 data/catalog.db \".schema collections\")"
-    ]
   }
 }

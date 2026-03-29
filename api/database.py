@@ -43,6 +43,30 @@ CREATE TABLE IF NOT EXISTS personal_tokens (
 );
 
 CREATE INDEX IF NOT EXISTS idx_personal_tokens_hash ON personal_tokens(token_hash);
+
+-- Full-text search index
+CREATE VIRTUAL TABLE IF NOT EXISTS icons_fts USING fts5(
+    name, description, tags, use_cases, category,
+    content='icons', content_rowid='rowid'
+);
+
+-- Keep FTS in sync with icons table
+CREATE TRIGGER IF NOT EXISTS icons_ai AFTER INSERT ON icons BEGIN
+    INSERT INTO icons_fts(rowid, name, description, tags, use_cases, category)
+    VALUES (new.rowid, new.name, new.description, new.tags, new.use_cases, new.category);
+END;
+
+CREATE TRIGGER IF NOT EXISTS icons_ad AFTER DELETE ON icons BEGIN
+    INSERT INTO icons_fts(icons_fts, rowid, name, description, tags, use_cases, category)
+    VALUES ('delete', old.rowid, old.name, old.description, old.tags, old.use_cases, old.category);
+END;
+
+CREATE TRIGGER IF NOT EXISTS icons_au AFTER UPDATE ON icons BEGIN
+    INSERT INTO icons_fts(icons_fts, rowid, name, description, tags, use_cases, category)
+    VALUES ('delete', old.rowid, old.name, old.description, old.tags, old.use_cases, old.category);
+    INSERT INTO icons_fts(rowid, name, description, tags, use_cases, category)
+    VALUES (new.rowid, new.name, new.description, new.tags, new.use_cases, new.category);
+END;
 """
 
 
@@ -52,7 +76,20 @@ def init_db(db_path: Path = DEFAULT_DB_PATH) -> None:
     conn = sqlite3.connect(str(db_path))
     conn.executescript(DB_SCHEMA)
     conn.commit()
+    rebuild_fts(conn)
     conn.close()
+
+
+def rebuild_fts(conn: sqlite3.Connection) -> None:
+    """Rebuild the FTS index from the icons table."""
+    conn.execute("INSERT INTO icons_fts(icons_fts) VALUES ('delete-all')")
+    conn.execute(
+        """INSERT INTO icons_fts(rowid, name, description, tags, use_cases, category)
+           SELECT rowid, name, COALESCE(description, ''), COALESCE(tags, '[]'),
+                  COALESCE(use_cases, '[]'), category
+           FROM icons"""
+    )
+    conn.commit()
 
 
 def get_db(db_path: Path = DEFAULT_DB_PATH) -> sqlite3.Connection:
