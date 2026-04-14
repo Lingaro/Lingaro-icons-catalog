@@ -1,6 +1,7 @@
 """Admin endpoints -- export, import, re-annotate."""
 
 import json
+import re
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, File
 
@@ -32,13 +33,18 @@ async def import_catalog(file: UploadFile = File(...), _auth=Depends(require_adm
         data = json.loads(content)
     except json.JSONDecodeError:
         raise HTTPException(400, "Invalid JSON")
+    # Allowlist pattern: icons/<set>/<category>/<file>.(svg|png)
+    _SAFE_PATH = re.compile(r"^icons/[a-zA-Z0-9_\- .]+/[a-zA-Z0-9_\- .+]+/[a-zA-Z0-9_\- .]+\.(svg|png)$")
     count = 0
     for icon in data.get("icons", []):
+        icon_path = icon.get("path", "")
+        if not _SAFE_PATH.match(icon_path):
+            continue  # skip icons with suspicious paths
         if get_icon(db, icon["id"]):
             continue
         insert_icon(db, {
             "id": icon["id"], "name": icon["name"], "filename": icon["filename"],
-            "path": icon["path"], "category": icon.get("category", ""),
+            "path": icon_path, "category": icon.get("category", ""),
             "set_name": icon.get("set", icon.get("set_name", "")),
             "description": icon.get("description"),
             "tags": icon.get("tags", []), "use_cases": icon.get("use_cases", []),

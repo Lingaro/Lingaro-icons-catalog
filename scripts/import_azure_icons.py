@@ -15,7 +15,8 @@ import sqlite3
 import tempfile
 import zipfile
 from pathlib import Path
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
 
 AZURE_ICONS_URL = "https://arch-center.azureedge.net/icons/Azure_Public_Service_Icons_V23.zip"
 SET_NAME = "Azure"
@@ -45,9 +46,18 @@ def import_azure_icons(db_path: Path = DEFAULT_DB, icons_dir: Path = ICONS_DIR) 
 
     Returns dict with keys: added, removed, unchanged, total.
     """
-    # Download zip
+    # Download zip with timeout and redirect validation
     print(f"Downloading Azure icons from {AZURE_ICONS_URL}...")
-    resp = urlopen(AZURE_ICONS_URL)
+    ALLOWED_HOSTS = {"arch-center.azureedge.net"}
+    TIMEOUT_SECONDS = 60
+    req = Request(AZURE_ICONS_URL)
+    resp = urlopen(req, timeout=TIMEOUT_SECONDS)
+    # Verify we weren't redirected to an unexpected host
+    final_url = resp.geturl()
+    from urllib.parse import urlparse
+    final_host = urlparse(final_url).hostname
+    if final_host not in ALLOWED_HOSTS:
+        raise RuntimeError(f"Unexpected redirect to {final_host} — aborting download")
     zip_data = io.BytesIO(resp.read())
     zf = zipfile.ZipFile(zip_data)
 
@@ -98,11 +108,20 @@ def import_azure_icons(db_path: Path = DEFAULT_DB, icons_dir: Path = ICONS_DIR) 
 
     # Extract new/updated SVGs to disk and insert into DB
     icons_dir.mkdir(parents=True, exist_ok=True)
+    resolved_icons_dir = icons_dir.resolve()
     for icon_id, icon in new_icons.items():
-        # Extract SVG to disk
-        cat_dir = icons_dir / icon["category"]
+        # Sanitize category: use only the final component name to block ".." traversal
+        safe_category = Path(icon["category"]).name
+        if not safe_category or safe_category in (".", ".."):
+            print(f"Skipping icon with unsafe category: {icon['zip_entry']}")
+            continue
+        cat_dir = icons_dir / safe_category
         cat_dir.mkdir(parents=True, exist_ok=True)
         svg_path = cat_dir / Path(icon["zip_entry"]).name
+        # Verify resolved path stays within icons_dir
+        if not svg_path.resolve().is_relative_to(resolved_icons_dir):
+            print(f"Skipping zip slip attempt: {icon['zip_entry']}")
+            continue
         svg_path.write_bytes(zf.read(icon["zip_entry"]))
 
         if icon_id in existing:

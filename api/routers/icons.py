@@ -2,6 +2,7 @@
 
 import os
 import re
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Optional
 
@@ -18,6 +19,48 @@ from ..services.search import SearchService
 router = APIRouter(prefix="/api/icons", tags=["icons"])
 
 MAX_FILE_SIZE = 5 * 1024 * 1024
+
+# SVG event handler attributes that can execute JavaScript
+_SVG_EVENT_ATTRS = re.compile(r"^on\w+$", re.IGNORECASE)
+_SVG_NS = "http://www.w3.org/2000/svg"
+_XLINK_NS = "http://www.w3.org/1999/xlink"
+
+
+def _sanitize_svg(data: bytes) -> bytes:
+    """Parse SVG and strip script elements and event handler attributes."""
+    try:
+        # Register common SVG namespaces to preserve them in output
+        ET.register_namespace("", _SVG_NS)
+        ET.register_namespace("xlink", _XLINK_NS)
+        tree = ET.ElementTree(ET.fromstring(data))
+        root = tree.getroot()
+    except ET.ParseError:
+        raise HTTPException(400, "Invalid SVG: could not parse as XML")
+
+    # Verify root is an <svg> element
+    tag = root.tag.split("}")[-1] if "}" in root.tag else root.tag
+    if tag.lower() != "svg":
+        raise HTTPException(400, "Invalid SVG: root element is not <svg>")
+
+    # Remove <script> elements and event handler attributes
+    _strip_dangerous(root)
+    return ET.tostring(root, encoding="unicode", xml_declaration=True).encode("utf-8")
+
+
+def _strip_dangerous(element: ET.Element):
+    """Recursively strip script elements and event handler attributes."""
+    # Remove dangerous child elements
+    for child in list(element):
+        child_tag = child.tag.split("}")[-1] if "}" in child.tag else child.tag
+        if child_tag.lower() in ("script", "foreignobject"):
+            element.remove(child)
+        else:
+            _strip_dangerous(child)
+    # Remove event handler attributes
+    for attr in list(element.attrib):
+        attr_local = attr.split("}")[-1] if "}" in attr else attr
+        if _SVG_EVENT_ATTRS.match(attr_local):
+            del element.attrib[attr]
 
 
 def _background_annotate(icon_id: str, db_path: str, file_data: bytes, icon_name: str, category: str):
@@ -107,6 +150,12 @@ async def upload_icon(
     data = await file.read()
     if len(data) > MAX_FILE_SIZE:
         raise HTTPException(400, f"File too large (max {MAX_FILE_SIZE // 1024 // 1024}MB)")
+    # Validate and sanitize file content
+    if file.filename.endswith(".svg"):
+        data = _sanitize_svg(data)
+    elif file.filename.endswith(".png"):
+        if not data[:8].startswith(b"\x89PNG\r\n\x1a\n"):
+            raise HTTPException(400, "Invalid PNG: magic bytes mismatch")
     icon_name = name or file.filename.rsplit(".", 1)[0]
     icon_id = _make_icon_id(set_name, category, icon_name)
     if get_icon(db, icon_id):
@@ -158,7 +207,7 @@ async def delete_icon_endpoint(
 
 @router.get("/{icon_id}/file")
 async def get_icon_file(
-    icon_id: str, db=Depends(get_database), storage=Depends(get_storage_backend),
+    icon_id: str, user=Depends(require_auth), db=Depends(get_database), storage=Depends(get_storage_backend),
 ):
     icon = get_icon(db, icon_id)
     if not icon:
@@ -168,7 +217,11 @@ async def get_icon_file(
     if not data:
         raise HTTPException(404, "Icon file not found")
     content_type = "image/svg+xml" if icon["filename"].endswith(".svg") else "image/png"
-    return Response(
-        content=data, media_type=content_type,
-        headers={"Cache-Control": "public, max-age=3600"},  # Cache for 1 hour
-    )
+    headers = {
+        "Cache-Control": "public, max-age=3600",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'",
+        "X-Content-Type-Options": "nosniff",
+    }
+    if content_type == "image/svg+xml":
+        headers["Content-Disposition"] = f'inline; filename="{icon["filename"]}"'
+    return Response(content=data, media_type=content_type, headers=headers)

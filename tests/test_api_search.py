@@ -10,11 +10,16 @@ from fastapi.testclient import TestClient
 from api.database import init_db, get_db, insert_icon
 
 
+TEST_API_KEY = "test-api-key-for-tests"
+
+
 @pytest.fixture
 def app_client(tmp_path, monkeypatch):
     db_path = tmp_path / "test.db"
     monkeypatch.setenv("DATABASE_URL", str(db_path))
-    # Ensure dev mode (no auth required)
+    monkeypatch.setenv("API_KEY", TEST_API_KEY)
+    monkeypatch.delenv("AZURE_CLIENT_ID", raising=False)
+    monkeypatch.delenv("AZURE_TENANT_ID", raising=False)
     init_db(db_path)
     conn = get_db(db_path)
     insert_icon(conn, {
@@ -32,13 +37,11 @@ def app_client(tmp_path, monkeypatch):
     conn.close()
 
     from api.main import app
-    # Ensure dev mode AFTER import (load_dotenv may restore env vars from .env)
-    monkeypatch.delenv("AZURE_CLIENT_ID", raising=False)
-    monkeypatch.delenv("AZURE_TENANT_ID", raising=False)
-    monkeypatch.delenv("API_KEY", raising=False)
     import api.dependencies as deps
     deps._validator = None
-    return TestClient(app)
+    client = TestClient(app)
+    client.headers["X-API-Key"] = TEST_API_KEY
+    return client
 
 
 def test_search_returns_results(app_client):

@@ -38,14 +38,15 @@ class TestRequireAuth:
                 _resolve_user(authorization=None, x_api_key=None)
             assert exc_info.value.status_code == 401
 
-    def test_dev_mode_no_auth_required(self):
+    def test_no_auth_configured_raises_503(self):
         from api.dependencies import _resolve_user
 
         clean_env = {k: v for k, v in os.environ.items()
                      if k not in ("AZURE_CLIENT_ID", "AZURE_TENANT_ID", "API_KEY")}
         with patch.dict(os.environ, clean_env, clear=True):
-            user = _resolve_user(authorization=None, x_api_key=None)
-            assert user.email == "dev-mode"
+            with pytest.raises(HTTPException) as exc_info:
+                _resolve_user(authorization=None, x_api_key=None)
+            assert exc_info.value.status_code == 503
 
 
 class TestRequireAdmin:

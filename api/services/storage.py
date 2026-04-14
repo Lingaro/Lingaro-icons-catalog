@@ -30,22 +30,29 @@ class LocalStorage(StorageBackend):
     """Store files on local filesystem."""
 
     def __init__(self, base_dir: Path = None):
-        self.base_dir = base_dir or Path(__file__).parent.parent.parent / "icons"
+        self.base_dir = (base_dir or Path(__file__).parent.parent.parent / "icons").resolve()
+
+    def _safe_path(self, key: str) -> Path:
+        """Resolve key to an absolute path and verify it stays within base_dir."""
+        resolved = (self.base_dir / key).resolve()
+        if not resolved.is_relative_to(self.base_dir):
+            raise ValueError(f"Path traversal blocked: {key!r}")
+        return resolved
 
     def save(self, key: str, data: bytes) -> str:
-        path = self.base_dir / key
+        path = self._safe_path(key)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
         return str(path)
 
     def get(self, key: str) -> Optional[bytes]:
-        path = self.base_dir / key
+        path = self._safe_path(key)
         if path.exists():
             return path.read_bytes()
         return None
 
     def delete(self, key: str) -> bool:
-        path = self.base_dir / key
+        path = self._safe_path(key)
         if path.exists():
             path.unlink()
             return True

@@ -89,7 +89,10 @@ def _resolve_user(
     x_api_key: Optional[str] = Header(None),
 ) -> CurrentUser:
     if not os.getenv("AZURE_CLIENT_ID") and not os.getenv("API_KEY"):
-        return CurrentUser(email="dev-mode", name="Developer", is_admin=True, auth_method="api_key")
+        raise HTTPException(
+            status_code=503,
+            detail="Authentication not configured. Set AZURE_CLIENT_ID/AZURE_TENANT_ID or API_KEY.",
+        )
 
     if x_api_key:
         # Try global API key first
@@ -116,8 +119,6 @@ def _check_admin(user: CurrentUser) -> CurrentUser:
         return user
     if user.email == "api-key-user":
         return user
-    if user.email == "dev-mode":
-        return user
     raise HTTPException(status_code=403, detail="Admin access required")
 
 
@@ -143,7 +144,7 @@ def require_api_key(x_api_key: Optional[str] = Header(None)) -> bool:
     """Deprecated: use require_admin instead."""
     expected = os.getenv("API_KEY")
     if not expected:
-        return True
+        raise HTTPException(status_code=503, detail="API_KEY not configured")
     if not x_api_key or not hmac.compare_digest(x_api_key, expected):
         raise HTTPException(status_code=401, detail="Invalid or missing API key")
     return True
